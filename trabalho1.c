@@ -173,7 +173,8 @@ void maiorimc(Pessoa vet[]){
     }
 }
 void codigomenor(Pessoa vet[]){
-    int menor, i=0;
+    int i=0;
+    float menor;
     menor=vet[i].IMC;
     for (int i = 1; i < TAM; i++)
     {
@@ -186,9 +187,8 @@ void codigomenor(Pessoa vet[]){
     {
         if (vet[i].IMC==menor)
         {
-            
+            printf("%d\n", vet[i].codigo);
         }
-        
     }
     
 }
