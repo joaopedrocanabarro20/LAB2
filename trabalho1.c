@@ -127,7 +127,7 @@ void acimamedia(Pessoa vet[]){
             qtd++;
         }
     }
-    printf("%d pessoas estao acima da media de pesos\n", qtd);
+    printf("\n%d pessoas estao acima da media de pesos", qtd);
 }
 void notnormal(Pessoa vet[]){
     int qntd=0;
@@ -151,23 +151,65 @@ void mediacomnome(Pessoa vet[]){
         }
     }
 }
-
+void maiorimc(Pessoa vet[]){
+    int i=0, indicemaior=0, qntd=0;
+    float maior;
+    maior=vet[i].IMC;
+    printf("\nNome da(s) pessoa(s) com maior IMC:\n");
+    for (int i = 1; i < TAM; i++)
+    {
+        if (vet[i].IMC>=maior)
+        {
+            maior=vet[i].IMC;
+        }
+    }
+    for (int i = 0; i < TAM; i++)
+    {
+        if (vet[i].IMC==maior)
+        {
+            printf("\n%s", vet[i].nome);
+        }
+        
+    }
+}
+void codigomenor(Pessoa vet[]){
+    int menor, i=0;
+    menor=vet[i].IMC;
+    for (int i = 1; i < TAM; i++)
+    {
+        if (vet[i].IMC<menor)
+        {
+            menor=vet[i].IMC;
+        }
+    }
+    for (int i = 0; i < TAM; i++)
+    {
+        if (vet[i].IMC==menor)
+        {
+            
+        }
+        
+    }
+    
+}
 int main(){
     int opc;
     float media;
     Pessoa pessoas[TAM];
     preenchevetor(pessoas);
-    printf("Qual relatório você deseja acessar?\n"
-        "1) os dados de todas as pessoas do vetor;\n"
-        "2) o nome das pessoas que estão com sobrepeso;\n"
-        "3) o código das pessoas que estão com obesidade;\n"
-        "4) o valor médio dos pesos;\n"
-        "5) a quantidade de pessoas que tem peso acima do valor médio dos pesos;\n"
-        "6) a quantidade de pessoas que não estão na faixa normal de peso;\n"
-        "7) o nome das pessoas que tem peso normal e que pesam menos do que o valor médio dos pesos;\n"
-        "8) o nome da(s) pessoa(s) que obteve (obtiveram) o maior IMC;\n"
-        "9) o código da(s) pessoa (s) que obteve (obtiveram) o menor IMC.\n"
-    );
+    printf("\n=========================================\n");
+    printf("\n|| Qual relatório você deseja acessar?\n"
+        "|| 1) os dados de todas as pessoas do vetor;\n"
+        "|| 2) o nome das pessoas que estão com sobrepeso;\n"
+        "|| 3) o código das pessoas que estão com obesidade;\n"
+        "|| 4) o valor médio dos pesos;\n"
+        "|| 5) a quantidade de pessoas que tem peso acima do valor médio dos pesos;\n"
+        "|| 6) a quantidade de pessoas que não estão na faixa normal de peso;\n"
+        "|| 7) o nome das pessoas que tem peso normal e que pesam menos do que o valor médio dos pesos;\n"
+        "|| 8) o nome da(s) pessoa(s) que obteve (obtiveram) o maior IMC;\n"
+        "|| 9) o código da(s) pessoa (s) que obteve (obtiveram) o menor IMC;\n");
+    printf("\n=========================================\n");
+    
     scanf("%d", &opc);
     switch(opc){
         case 1:
@@ -191,6 +233,12 @@ int main(){
             break;
         case 7:
             mediacomnome(pessoas);
+            break;
+        case 8:
+            maiorimc(pessoas);
+            break;
+        case 9:
+            codigomenor(pessoas);
             break;
         
 
