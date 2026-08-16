@@ -17,15 +17,16 @@ int verificafaixa(float imc){
     {
         return 0;
     }
-    else if (imc >= 18.5 && imc < 25.0)
+    else if (imc >= 18.5 && imc < 24.9)
     {
         return 1;
     }
-    else if (imc >= 25.0 && imc < 30.0)
+    else if (imc >= 24.9 && imc < 30.0)
     {
         return 2;
     }
-    else if(imc >= 30.0){
+    else
+    {
         return 3;
     }
 }
@@ -45,6 +46,8 @@ void preenchevetor(Pessoa vetorp[]) {
         printf("Digite o seu nome:\n");
         
         fgets(vetorp[i].nome, sizeof(vetorp[i].nome), stdin);
+
+        vetorp[i].nome[strcspn(vetorp[i].nome, "\n")] = '\0';
         
         printf("Digite seu peso(em kg):\n");
         
@@ -93,7 +96,7 @@ void mostradados(Pessoa *vet) {
 void mostranomesob(Pessoa vet[]){
     printf("Estão em sobrepeso:\n");
     for(int i=0; i<TAM; i++){
-        if(vet[i].IMC>=24.9 && vet[i].IMC<=30){
+        if(vet[i].IMC>=24.9 && vet[i].IMC<30.0){
             printf("%s\n", vet[i].nome);
         }
     }
@@ -145,14 +148,14 @@ void mediacomnome(Pessoa vet[]){
     media=mediapesos(vet);
     for (int i = 0; i < TAM; i++)
     {
-        if ( (vet[i].IMC>=18.5 && vet[i].IMC<=24.9) && (vet[i].peso<media))
+        if ( (vet[i].IMC>=18.5 && vet[i].IMC<24.9) && (vet[i].peso<media))
         {
             printf("%s\n", vet[i].nome);
         }
     }
 }
 void maiorimc(Pessoa vet[]){
-    int i=0, indicemaior=0, qntd=0;
+    int i=0;
     float maior;
     maior=vet[i].IMC;
     printf("\nNome da(s) pessoa(s) com maior IMC:\n");
@@ -243,4 +246,5 @@ int main(){
         
 
     }
+    return 0;
 }
