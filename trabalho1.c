@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
-#define TAM 2
+#include <stdlib.h>
+#define TAM 15
 
 typedef struct
 {
@@ -179,6 +180,7 @@ void codigomenor(Pessoa vet[]){
     int i=0;
     float menor;
     menor=vet[i].IMC;
+    printf("codigo das pessoas que tiveram o menor IMC:\n");
     for (int i = 1; i < TAM; i++)
     {
         if (vet[i].IMC<menor)
@@ -197,54 +199,70 @@ void codigomenor(Pessoa vet[]){
 }
 int main(){
     int opc;
+
     float media;
     Pessoa pessoas[TAM];
     preenchevetor(pessoas);
-    printf("\n=========================================\n");
+    do {
+    printf("\n\n\n=========================================================\n");
+
     printf("\n|| Qual relatório você deseja acessar?\n"
-        "|| 1) os dados de todas as pessoas do vetor;\n"
-        "|| 2) o nome das pessoas que estão com sobrepeso;\n"
-        "|| 3) o código das pessoas que estão com obesidade;\n"
-        "|| 4) o valor médio dos pesos;\n"
-        "|| 5) a quantidade de pessoas que tem peso acima do valor médio dos pesos;\n"
-        "|| 6) a quantidade de pessoas que não estão na faixa normal de peso;\n"
-        "|| 7) o nome das pessoas que tem peso normal e que pesam menos do que o valor médio dos pesos;\n"
-        "|| 8) o nome da(s) pessoa(s) que obteve (obtiveram) o maior IMC;\n"
-        "|| 9) o código da(s) pessoa (s) que obteve (obtiveram) o menor IMC;\n");
-    printf("\n=========================================\n");
-    
+           "|| 1) os dados de todas as pessoas do vetor;\n"
+           "|| 2) o nome das pessoas que estão com sobrepeso;\n"
+           "|| 3) o código das pessoas que estão com obesidade;\n"
+           "|| 4) o valor médio dos pesos;\n"
+           "|| 5) a quantidade de pessoas que tem peso acima do valor médio dos pesos;\n"
+           "|| 6) a quantidade de pessoas que não estão na faixa normal de peso;\n"
+           "|| 7) o nome das pessoas que tem peso normal e que pesam menos do que o valor médio dos pesos;\n"
+           "|| 8) o nome da(s) pessoa(s) que obteve (obtiveram) o maior IMC;\n"
+           "|| 9) o código da(s) pessoa (s) que obteve (obtiveram) o menor IMC;\n"
+           "|| 10) SAIR;\n");
+
+    printf("\n=========================================================\n");
+
     scanf("%d", &opc);
-    switch(opc){
+
+    switch(opc) {
         case 1:
             mostradados(pessoas);
             break;
+
         case 2:
             mostranomesob(pessoas);
             break;
+
         case 3:
             mostraobeso(pessoas);
             break;
-        case 4: 
+
+        case 4:
             media = mediapesos(pessoas);
             printf("Média dos pesos: %.2f\n", media);
             break;
+
         case 5:
             acimamedia(pessoas);
             break;
+
         case 6:
             notnormal(pessoas);
             break;
+
         case 7:
             mediacomnome(pessoas);
             break;
+
         case 8:
             maiorimc(pessoas);
             break;
+
         case 9:
             codigomenor(pessoas);
             break;
-        
 
+        case 10:
+            exit(0);
     }
-    return 0;
+
+} while (opc != 10);
 }
