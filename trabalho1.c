@@ -156,9 +156,8 @@ void mediacomnome(Pessoa vet[]){
     }
 }
 void maiorimc(Pessoa vet[]){
-    int i=0;
     float maior;
-    maior=vet[i].IMC;
+    maior=vet[0].IMC;
     printf("\nNome da(s) pessoa(s) com maior IMC:\n");
     for (int i = 1; i < TAM; i++)
     {
@@ -177,9 +176,8 @@ void maiorimc(Pessoa vet[]){
     }
 }
 void codigomenor(Pessoa vet[]){
-    int i=0;
     float menor;
-    menor=vet[i].IMC;
+    menor=vet[0].IMC;
     printf("codigo das pessoas que tiveram o menor IMC:\n");
     for (int i = 1; i < TAM; i++)
     {
@@ -218,7 +216,7 @@ int main(){
            "|| 9) o código da(s) pessoa (s) que obteve (obtiveram) o menor IMC;\n"
            "|| 10) SAIR;\n");
 
-    printf("\n=========================================================\n");
+    printf("\n=============================================================\n");
 
     scanf("%d", &opc);
 
