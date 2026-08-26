@@ -40,4 +40,3 @@ int main(){
     free(identeq);
 
 }
-//corrigir o malloc
