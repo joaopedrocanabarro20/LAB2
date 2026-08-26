@@ -2,17 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-void preenche_pontos(int qtde, int etapas, int** pontos){
-
+void preenche_pontos(int qtde, int etapas, int** pontos, int *ident){
+    printf("\n\n==Digite a pontução das equipes==\n\n");
     for (int i = 0; i < qtde; i++)
     {
+        printf("Equipe numero %d:\n", *(ident+i));
+        *(pontos+i)=(int*)malloc(sizeof(int)*etapas);
         for (int j = 0; j < etapas; j++)
         {
+            printf("Etapa %d: ", j+1);
             scanf("%d", &pontos[i][j]);
         }
-        
     }
-    
 }
 
 void preenche_ident(int qtd, int* identeq){
@@ -33,7 +34,10 @@ int main(){
     scanf(" %d", &quantidade_etapas);
     identeq = (int*)malloc(sizeof(int)*quantidade_equipes);
     preenche_ident(quantidade_equipes, identeq);
-    pontuacoes=(int**)malloc(sizeof(int*)*quantidade_equipes*quantidade_etapas);
-    preenche_pontos(quantidade_equipes, quantidade_etapas, pontuacoes);
+    pontuacoes = (int**)malloc(sizeof(int*)*quantidade_equipes);
+    preenche_pontos(quantidade_equipes, quantidade_etapas, pontuacoes, identeq);
+    free(pontuacoes);
+    free(identeq);
+
 }
 //corrigir o malloc
