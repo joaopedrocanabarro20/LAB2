@@ -6,7 +6,7 @@ void preenche_pontos(int qtde, int etapas, int** pontos, int *ident){
     printf("\n\n==Digite a pontução das equipes==\n\n");
     for (int i = 0; i < qtde; i++)
     {
-        printf("Equipe numero %d:\n", *(ident+i));
+        printf("Equipe numero %d\n", *(ident+i));
         *(pontos+i)=(int*)malloc(sizeof(int)*etapas);
         for (int j = 0; j < etapas; j++)
         {
@@ -14,6 +14,8 @@ void preenche_pontos(int qtde, int etapas, int** pontos, int *ident){
             scanf("%d", &pontos[i][j]);
         }
     }
+
+    
 }
 
 void preenche_ident(int qtd, int* identeq){
@@ -25,7 +27,7 @@ void preenche_ident(int qtd, int* identeq){
 }
 
 int main(){
-    int quantidade_equipes, quantidade_etapas;
+    int quantidade_equipes, quantidade_etapas, opc;
     int* identeq;
     int** pontuacoes;
     printf("Insira a quantidade de equipes:\n");
@@ -36,6 +38,30 @@ int main(){
     preenche_ident(quantidade_equipes, identeq);
     pontuacoes = (int**)malloc(sizeof(int*)*quantidade_equipes);
     preenche_pontos(quantidade_equipes, quantidade_etapas, pontuacoes, identeq);
+
+    do
+    {
+        scanf("%d", &opc);
+        switch (opc)
+        {
+        case 1:
+            
+            break;
+        case 2:
+            
+            break;
+        case 3:
+
+            break;
+        case 4:
+
+            break;
+        case 0:
+            exit(0);
+            break;
+        }
+    } while (opc != 0);
+    
     free(pontuacoes);
     free(identeq);
 
