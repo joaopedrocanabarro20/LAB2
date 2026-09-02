@@ -24,13 +24,7 @@ void preenche_pontos(int qtde, int etapas, int** pontos, int *ident){
     for (int i = 0; i < qtde; i++)
     {
         printf("Equipe número %d\n", *(ident+i));
-        *(pontos+i)=(int*)malloc(sizeof(int)*etapas);
-
-        if(*(pontos+i) == NULL){
-            printf("Memória insuficiente!\n");
-            exit(1);
-        }
-
+        alocarVetores(etapas, &pontos[i]);
         for (int j = 0; j < etapas; j++)
         {
             printf("Etapa %d: ", j+1);
@@ -60,7 +54,7 @@ int main(){
     alocarVetores(quantidade_equipes, &identeq);
     preenche_ident(quantidade_equipes, identeq);
     alocarMatrizes(quantidade_equipes, quantidade_etapas, &pontuacoes);
-    pontuacoes = (int**)malloc(sizeof(int*)*quantidade_equipes);
+    
     preenche_pontos(quantidade_equipes, quantidade_etapas, pontuacoes, identeq);
 
     do
@@ -78,7 +72,6 @@ int main(){
         switch (opc)
         {
         case 1:
-            
             break;
         case 2:
             
@@ -90,12 +83,18 @@ int main(){
 
             break;
         case 0:
-            exit(0);
             break;
         }
     } while (opc != 0);
     
+
+    for (int i = 0; i < quantidade_equipes; i++)
+    {
+        free(pontuacoes[i]);
+    }
+
     free(pontuacoes);
     free(identeq);
+    
 
 }
