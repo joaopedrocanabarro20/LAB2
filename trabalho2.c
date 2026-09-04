@@ -15,6 +15,9 @@ float calcula_media(int **pontuacoes, int qtd_et, int i){
     int total = calcula_totais(pontuacoes, qtd_et, i);
     return (float)total/qtd_et;
 }
+void Exibir_classificacao_final(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
+    
+}
 void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
     printf("|EQUIPE(S)|");
     for (int i=0; i<qtd_et; i++){
@@ -121,7 +124,7 @@ int main(){
         }
             break;
         case 3:
-        Exibir_classificacao_final();
+        Exibir_classificacao_final(identeq, pontuacoes, quantidade_equipes, quantidade_etapas);
             break;
         case 4:
 
