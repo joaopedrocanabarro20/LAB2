@@ -3,11 +3,6 @@
 #include <string.h>
 #include <unistd.h>
 
-typedef struct{
-    int id_equipe;
-    int total_pontos;
-}Classificacao;
-
 int compara(const void *a, const void *b){//arrumar isso
     int x = *(const int *)a;
     int y = *(const int *)b;
