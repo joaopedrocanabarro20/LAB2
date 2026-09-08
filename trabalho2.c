@@ -90,8 +90,8 @@ void preenche_ident(int qtd, int* identeq){
 }
 
 int main(){
-    int quantidade_equipes, quantidade_etapas, opc, verifica=0;
-    int* identeq;
+    int quantidade_equipes=0, quantidade_etapas=0, opc, verifica=0;
+    int* identeq ;
     int** pontuacoes;
     int *total;
     do
@@ -116,7 +116,7 @@ int main(){
             printf("Insira a quantidade de etapas:\n");
             scanf(" %d", &quantidade_etapas);
             alocarVetores(quantidade_equipes, &identeq);
-            alocarVetores(total, identeq);
+            alocarVetores(quantidade_equipes, &total);
             alocarMatrizes(quantidade_equipes, quantidade_etapas, &pontuacoes);
             preenche_ident(quantidade_equipes, identeq);
             cadastro_pontuacoes(quantidade_equipes, quantidade_etapas, pontuacoes, identeq, total);
