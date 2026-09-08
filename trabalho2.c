@@ -3,7 +3,17 @@
 #include <string.h>
 #include <unistd.h>
 
+typedef struct{
+    int id_equipe;
+    int total_pontos;
+}Classificacao;
 
+int compara(const void *a, const void *b){//arrumar isso
+    int x = *(const int *)a;
+    int y = *(const int *)b;
+
+    return x - y;
+}
 int calcula_totais(int **pontuacoes, int qtd_et, int i){
     int total=0;
     for (int j=0; j<qtd_et; j++){
@@ -15,8 +25,17 @@ float calcula_media(int **pontuacoes, int qtd_et, int i){
     int total = calcula_totais(pontuacoes, qtd_et, i);
     return (float)total/qtd_et;
 }
-void Exibir_classificacao_final(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
-    
+void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total){
+    int* ordenado=malloc(sizeof(int) * qtd_eq);
+    for (int i = 0; i < qtd_eq; i++)
+    {
+        ordenado[i]=total[i];
+    }
+    qsort(ordenado, qtd_eq, sizeof(int), compara);//não sabia que essa função existia em C
+    for (int i = 0; i < qtd_eq; i++)
+    {
+        printf("%d\n", ordenado[i]);
+    }
 }
 void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
     printf("|EQUIPE(S)|");
@@ -30,6 +49,7 @@ void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
        for(int j=0; j<qtd_et; j++){
         printf("|   %d   |", pontuacoes[i][j]);
        }
+
        printf("|  %d  |", calcula_totais(pontuacoes, qtd_et, i ));
        printf("| %.3f |\n", calcula_media(pontuacoes, qtd_et, i));
     }
@@ -51,7 +71,7 @@ void alocarMatrizes(int qtdequipe, int qtdetapas, int ***pontuacoes){
 
 }
 
-void cadastro_pontuacoes(int qtde, int etapas, int** pontos, int *ident){
+void cadastro_pontuacoes(int qtde, int etapas, int** pontos, int *ident, int* total){
     printf("\n\n==Digite a pontuação das equipes==\n\n");
     for (int i = 0; i < qtde; i++)
     {
@@ -62,6 +82,7 @@ void cadastro_pontuacoes(int qtde, int etapas, int** pontos, int *ident){
             printf("Etapa %d: ", j+1);
             scanf("%d", &pontos[i][j]);
         }
+        total[i]=calcula_totais(pontos, etapas, i);
     }
 }
 
@@ -77,7 +98,7 @@ int main(){
     int quantidade_equipes, quantidade_etapas, opc, verifica=0;
     int* identeq;
     int** pontuacoes;
-    
+    int *total;
     do
     {
         printf("\n===== MENU =====\n");
@@ -100,9 +121,10 @@ int main(){
             printf("Insira a quantidade de etapas:\n");
             scanf(" %d", &quantidade_etapas);
             alocarVetores(quantidade_equipes, &identeq);
+            alocarVetores(total, identeq);
             alocarMatrizes(quantidade_equipes, quantidade_etapas, &pontuacoes);
             preenche_ident(quantidade_equipes, identeq);
-            cadastro_pontuacoes(quantidade_equipes, quantidade_etapas, pontuacoes, identeq);
+            cadastro_pontuacoes(quantidade_equipes, quantidade_etapas, pontuacoes, identeq, total);
 
             verifica++;
             }
@@ -124,7 +146,13 @@ int main(){
         }
             break;
         case 3:
-        Exibir_classificacao_final(identeq, pontuacoes, quantidade_equipes, quantidade_etapas);
+            if (verifica == 0){
+                printf("Você precisa preencher primeiro!\n");
+                sleep(2);
+            }
+            else{
+                Exibir_classificacao_final(identeq, quantidade_equipes, total);
+            }           
             break;
         case 4:
 
