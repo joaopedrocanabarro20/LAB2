@@ -3,12 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
-int compara(const void *a, const void *b){//arrumar isso
-    int x = *(const int *)a;
-    int y = *(const int *)b;
 
-    return x - y;
-}
 int calcula_totais(int **pontuacoes, int qtd_et, int i){
     int total=0;
     for (int j=0; j<qtd_et; j++){
@@ -20,17 +15,50 @@ float calcula_media(int **pontuacoes, int qtd_et, int i){
     int total = calcula_totais(pontuacoes, qtd_et, i);
     return (float)total/qtd_et;
 }
-void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total){
-    int* ordenado=malloc(sizeof(int) * qtd_eq);
-    for (int i = 0; i < qtd_eq; i++)
-    {
-        ordenado[i]=total[i];
+void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et, int** pontuacoes){
+    // 1. Cria um vetor de índices: 0, 1, 2, ..., (qtd_eq - 1)
+    int* indices = malloc(sizeof(int)*qtd_eq);
+    for (int i = 0; i < qtd_eq; i++){
+        indices[i] = i;
     }
-    qsort(ordenado, qtd_eq, sizeof(int), compara);//não sabia que essa função existia em C
-    for (int i = 0; i < qtd_eq; i++)
-    {
-        printf("%d\n", ordenado[i]);
+
+    // 2. Ordena o vetor de índices baseado nos pontos do vetor 'total'
+    // Usando Bubble Sort simples (ordem decrescente - maior pontuação primeiro)
+    for(int i=0; i<qtd_eq-1; i++){
+        for(int j=0; j<qtd_eq-i-1; j++){
+            // Se o total do índice atual for menor que o do próximo, inverte os índices
+            if(total[indices[j]] < total[indices[j+1]]) {
+                int temp = indices[j];
+                indices[j] = indices[j+1];
+                indices[j+1] = temp;
+            }
+        }
     }
+
+    // 3. Imprime a tabela usando os índices ordenados
+    printf("\n| POSICAO |EQUIPE(S)|");
+    for (int i = 0; i < qtd_et; i++){
+        printf("|ETAPA %d|", i+1);
+    }
+    printf("|TOTAL|");
+    printf("|MEDIA|\n");
+
+    for (int i = 0; i < qtd_eq; i++){
+       int idx = indices[i]; // Pega o índice da equipe na ordem correta
+       
+       printf("|   %dº   |   %d   |", i + 1, identeq[idx]);
+       
+       for(int j = 0; j < qtd_et; j++){
+           printf("|   %d   |", pontuacoes[idx][j]);
+       }
+
+       // Usa o índice para acessar o total e calcular a média
+       printf("|  %d  |", total[idx]);
+       printf("| %.3f |\n", (float)total[idx] / qtd_et);
+    }
+
+    // Libera a memória do vetor auxiliar
+    free(indices);
 }
 void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
     printf("|EQUIPE(S)|");
@@ -146,7 +174,7 @@ int main(){
                 sleep(2);
             }
             else{
-                Exibir_classificacao_final(identeq, quantidade_equipes, total);
+                Exibir_classificacao_final(identeq, quantidade_equipes, total, quantidade_etapas, pontuacoes);
             }           
             break;
         case 4:
