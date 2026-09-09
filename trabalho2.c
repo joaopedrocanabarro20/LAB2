@@ -223,6 +223,7 @@ int main(){
             }
             else{
                 Exibir_classificacao_final(identeq, quantidade_equipes, total, quantidade_etapas, pontuacoes);
+                sleep(3);
             }           
             break;
         case 4:
