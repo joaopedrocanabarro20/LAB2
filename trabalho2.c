@@ -3,6 +3,17 @@
 #include <string.h>
 #include <unistd.h>
 
+void alocarVetores(int qtd, int** ident);
+void alocarMatrizes(int qtdequipe, int qtdetapas, int ***pontuacoes);
+int calcula_totais(int **pontuacoes, int qtd_et, int i);
+float calcula_media(int **pontuacoes, int qtd_et, int i);
+void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et, int** pontuacoes);
+void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et);
+void cadastro_pontuacoes(int qtde, int etapas, int** pontos, int *ident, int* total);
+void preenche_ident(int qtd, int* identeq);
+void exibir_desempenhoetapas(int quantidade_etapas, int quantidade_equipes, int** pontuacoes);
+
+
 
 int calcula_totais(int **pontuacoes, int qtd_et, int i){
     int total=0;
@@ -15,9 +26,18 @@ float calcula_media(int **pontuacoes, int qtd_et, int i){
     int total = calcula_totais(pontuacoes, qtd_et, i);
     return (float)total/qtd_et;
 }
+void exibir_desempenhoetapas(int qtd_et, int qtd_eq, int** pontos){
+    int etapa_escolhida;
+    printf("Digite a etapa que desejas conferir: ");
+    scanf(" %d", &etapa_escolhida);
+    int* pontos_etapa_ordenado;
+    alocarVetores(qtd_eq, pontos_etapa_ordenado);
+    
+}
 void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et, int** pontuacoes){
     // 1. Cria um vetor de índices: 0, 1, 2, ..., (qtd_eq - 1)
-    int* indices = malloc(sizeof(int)*qtd_eq);
+    int* indices;
+    alocarVetores(qtd_eq, &indices);
     for (int i = 0; i < qtd_eq; i++){
         indices[i] = i;
     }
@@ -36,7 +56,7 @@ void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et
     }
 
     // 3. Imprime a tabela usando os índices ordenados
-    printf("\n| POSICAO |EQUIPE(S)|");
+    printf("\n| POSICAO ||EQUIPE(S)|");
     for (int i = 0; i < qtd_et; i++){
         printf("|ETAPA %d|", i+1);
     }
@@ -74,7 +94,7 @@ void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et){
        }
 
        printf("|  %d  |", calcula_totais(pontuacoes, qtd_et, i ));
-       printf("| %.3f |\n", calcula_media(pontuacoes, qtd_et, i));
+       printf("| %.2f |\n", calcula_media(pontuacoes, qtd_et, i));
     }
 }
 void alocarVetores(int qtd, int** ident){
@@ -128,7 +148,7 @@ int main(){
         printf("1 - Cadastrar Identificação e pontuação das equipes\n");
         printf("2 - Exibir Tabela Geral\n");
         printf("3 - Exibir Classificação Final\n");
-        printf("4 - Opcao 4\n");
+        printf("4 - Exibir Desempenho por etapa\n");
         printf("0 - Sair\n");
         printf("Escolha: ");
 
@@ -153,7 +173,7 @@ int main(){
             }
             else{
                 printf("Você ja preencheu !!\n");
-                sleep(3); //pesquisei sobre essa função, basicamente ela espera um pouco para aparecer o menu dnv
+                sleep(1); //pesquisei sobre essa função, basicamente ela espera um pouco para aparecer o menu dnv
             }
             break;
         case 2:
@@ -161,27 +181,37 @@ int main(){
         if (verifica == 0)
         {
             printf("Você precisa preencher !!\n");
-            sleep(3);
+            sleep(1);
         }
         else{
             tabelageral(identeq, pontuacoes, quantidade_equipes, quantidade_etapas);
-            sleep(5);
+            sleep(3);
         }
             break;
         case 3:
             if (verifica == 0){
                 printf("Você precisa preencher primeiro!\n");
-                sleep(2);
+                sleep(1);
             }
             else{
                 Exibir_classificacao_final(identeq, quantidade_equipes, total, quantidade_etapas, pontuacoes);
             }           
             break;
         case 4:
-
+            if (verifica == 0)
+            {
+                printf("Você precisa preencher primeiro!\n");
+                sleep(1);
+            }
+            else{
+                exibir_desempenhoetapas(quantidade_etapas, quantidade_equipes, pontuacoes);
+            }
             break;
         case 0:
+            printf("Tchau Tchau\n");
             break;
+        default:
+            printf("Opção Inválida!!!\n");
         }
     } while (opc != 0);
     
