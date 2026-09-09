@@ -3,6 +3,8 @@
 #include <string.h>
 #include <unistd.h>
 
+
+
 void alocarVetores(int qtd, int** ident);
 void alocarMatrizes(int qtdequipe, int qtdetapas, int ***pontuacoes);
 int calcula_totais(int **pontuacoes, int qtd_et, int i);
@@ -11,7 +13,7 @@ void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et
 void tabelageral(int *identeq, int **pontuacoes, int qtd_eq, int qtd_et);
 void cadastro_pontuacoes(int qtde, int etapas, int** pontos, int *ident, int* total);
 void preenche_ident(int qtd, int* identeq);
-void exibir_desempenhoetapas(int quantidade_etapas, int quantidade_equipes, int** pontuacoes);
+void exibir_desempenhoetapas(int quantidade_etapas, int quantidade_equipes, int** pontuacoes, int* identeq);
 
 
 
@@ -26,14 +28,39 @@ float calcula_media(int **pontuacoes, int qtd_et, int i){
     int total = calcula_totais(pontuacoes, qtd_et, i);
     return (float)total/qtd_et;
 }
-void exibir_desempenhoetapas(int qtd_et, int qtd_eq, int** pontos){
-    int etapa_escolhida;
-    printf("Digite a etapa que desejas conferir: ");
-    scanf(" %d", &etapa_escolhida);
-    int* pontos_etapa_ordenado;
-    alocarVetores(qtd_eq, pontos_etapa_ordenado);
+void exibir_desempenhoetapas(int qtd_et, int qtd_eq, int** pontos, int *identeq){
+    int* indices;
+    alocarVetores(qtd_eq, &indices);
+    for (int i = 0; i < qtd_et; i++)
+    {
+        printf("\nETAPA %d:\n", i+1);
+        int soma_etapa = 0;
+        for(int k = 0; k < qtd_eq; k++){
+            indices[k] = k;
+            soma_etapa += pontos[k][i]; 
+        }
+
+        float media_etapa = (float)soma_etapa / qtd_eq;
+
+        for(int j = 0; j < qtd_eq - 1; j++){
+            for(int k = 0; k < qtd_eq - j - 1; k++){
+                if(pontos[indices[k]][i] < pontos[indices[k+1]][i]){
+                    int temp = indices[k];
+                    indices[k] = indices[k+1];
+                    indices[k+1] = temp;
+                }
+            }
+        }
+        int idx_primeiro = indices[0];
+        int idx_ultimo = indices[qtd_eq-1];
+        printf("- Primeiro Lugar: Equipe %d (%d pontos)\n", identeq[idx_primeiro], pontos[idx_primeiro][i]);
+        printf("- Ultimo Lugar: Equipe %d (%d pontos)\n", identeq[idx_ultimo], pontos[idx_ultimo][i]);
+        printf("- Media da Etapa: %.2f pontos\n", media_etapa);
     
-}
+    }    
+    free(indices);
+    }
+    
 void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et, int** pontuacoes){
     // 1. Cria um vetor de índices: 0, 1, 2, ..., (qtd_eq - 1)
     int* indices;
@@ -66,7 +93,7 @@ void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et
     for (int i = 0; i < qtd_eq; i++){
        int idx = indices[i]; // Pega o índice da equipe na ordem correta
        
-       printf("|   %dº   |   %d   |", i + 1, identeq[idx]);
+       printf("|   %dº   ||   %d   |", i + 1, identeq[idx]);
        
        for(int j = 0; j < qtd_et; j++){
            printf("|   %d   |", pontuacoes[idx][j]);
@@ -76,6 +103,7 @@ void Exibir_classificacao_final(int *identeq, int qtd_eq, int* total, int qtd_et
        printf("|  %d  |", total[idx]);
        printf("| %.3f |\n", (float)total[idx] / qtd_et);
     }
+    sleep(3);
 
     // Libera a memória do vetor auxiliar
     free(indices);
@@ -204,7 +232,7 @@ int main(){
                 sleep(1);
             }
             else{
-                exibir_desempenhoetapas(quantidade_etapas, quantidade_equipes, pontuacoes);
+                exibir_desempenhoetapas(quantidade_etapas, quantidade_equipes, pontuacoes, identeq);
             }
             break;
         case 0:
@@ -223,6 +251,5 @@ int main(){
 
     free(pontuacoes);
     free(identeq);
-    
-
+    free(total);
 }
