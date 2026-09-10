@@ -255,7 +255,7 @@ int main(){
             }
             else{
                 printf("Você ja preencheu !!\n");
-                sleep(1); 
+                
             }
             break;
         case 2:
@@ -263,11 +263,9 @@ int main(){
         if (verifica == 0)
         {
             printf("Você precisa preencher !!\n");
-            sleep(1);
         }
         else{
             tabelageral(identeq, pontuacoes, quantidade_equipes, quantidade_etapas, total, media);
-            sleep(3);
         }
             break;
         case 3:
