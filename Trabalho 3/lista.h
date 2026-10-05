@@ -12,7 +12,7 @@ typedef struct medicos{
 }medicos;
 
 typedef struct pacientes{
-    char cpf[16];
+    long int cpf;
     char nome[20];
     char telefone[13];
     struct pacientes *prox;
@@ -50,49 +50,18 @@ typedef struct{
     Consulta* inicio;
 }Listaconsultas;
 
-void preenchemed(medicos *medico){
-    printf("Digite seu CRM: ");
-    scanf("%s", medico->crm);
-    printf("\nDigite seu nome: ");
-    fgets(medico->nome, sizeof(medico->nome), stdin);
-    printf("\nDigite sua especialidade: ");
-    scanf("%s", medico->especialidade);
-    printf("\nDigite seu telefone: ");
-    scanf("%s", medico->telefone);
-    medico->prox = NULL;
-}
+//Médicos
+void preenchemed(medicos *medico);
+void cadastroMedicos(Listamedicos* lista);
+void ListarMedicos(Listamedicos *lista);
 
-void cadastroMedicos(Listamedicos* lista){
-    medicos* med = malloc(sizeof(medicos)); 
-    if (med == NULL)
-    {
-        free(med);
-        return ;
-    }
-    
-    preenchemed(med);
-    if (lista->inicio == NULL)
-    {
-        lista->inicio = med;
-    }
-    else{
-        medicos* p = lista->inicio;
-        while (p->prox != NULL)
-        {
-            if (strcmp(p->crm, med->crm) == 0)
-            {
-                free(med);
-                return;
-            }
-            p=p->prox;
-        }
-        if (strcmp(p->crm, med->crm) == 0)
-        {
-            free(med);
-            return;
-        }
-        p->prox = med;
-    }
-}
+//Pacientes
+void preenchepaciente(pacientes* p);
+void cadastro_pacientes(Listapacientes* listap);
+void Listarpaciente(Listapacientes *lista);
 
+//Consultas
+void preenche_consulta(Consulta* c);
 
+//Buscas
+pacientes* buscacpf(Listapacientes* lista, char cpf[]);
