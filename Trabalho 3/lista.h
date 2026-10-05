@@ -61,7 +61,12 @@ void cadastro_pacientes(Listapacientes* listap);
 void Listarpaciente(Listapacientes *lista);
 
 //Consultas
-void preenche_consulta(Consulta* c);
+void preenche_consulta(Consulta* c, Listapacientes* listap, Listamedicos* listam);
+void preenche_data(Data *data);
 
 //Buscas
 pacientes* buscacpf(Listapacientes* lista, char cpf[]);
+medicos* buscacrm(Listamedicos* lista, char crm[]);
+
+//verificação
+bool verificamedico_ocupado(Listaconsultas* lista, Consulta* c);
