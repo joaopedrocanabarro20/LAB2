@@ -16,16 +16,22 @@ Listamedicos *criar_lista_medicos() {
     return lista;
 }
 
-void preenchemed(medicos *medico){
+void preenchemed(medicos *medico)
+{
     printf("Digite seu CRM: ");
-    scanf("%s", medico->crm);
-    printf("\nDigite seu nome: ");
-    getchar();    
-    fgets(medico->nome, sizeof(medico->nome), stdin);
-    printf("\nDigite sua especialidade: ");
-    scanf("%s", medico->especialidade);
-    printf("\nDigite seu telefone: ");
-    scanf("%s", medico->telefone);
+    scanf("%6s", medico->crm);
+    limpar_buffer();
+
+    printf("Digite seu nome: ");
+    ler_linha(medico->nome, sizeof(medico->nome));
+
+    printf("Digite sua especialidade: ");
+    ler_linha(medico->especialidade, sizeof(medico->especialidade));
+
+    printf("Digite seu telefone: ");
+    scanf("%12s", medico->telefone);
+    limpar_buffer();
+
     medico->prox = NULL;
 }
 
@@ -87,16 +93,23 @@ Listapacientes *criar_lista_pacientes() {
     return lista;
 }
 
-void preenchepaciente(pacientes* p){
+void preenchepaciente(pacientes *p)
+{
+    limpar_buffer();
+
     printf("Digite seu nome: ");
-    getchar();
-    fgets(p->nome, sizeof(p->nome), stdin);
-    printf("\nDigite seu CPF: ");
-    scanf("%s", p->cpf);
+    ler_linha(p->nome, sizeof(p->nome));
+
+    printf("Digite seu CPF: ");
+    scanf("%14s", p->cpf);
+
     printf("Digite seu telefone: ");
-    scanf("%s", p->telefone);
+    scanf("%12s", p->telefone);
+    limpar_buffer();
+
     p->prox = NULL;
 }
+
 void cadastro_pacientes(Listapacientes* listap){
     pacientes* pac = malloc(sizeof(pacientes));
     if (pac == NULL)
@@ -202,10 +215,15 @@ Listaconsultas *criar_lista_consultas() {
 }
 
 void agenda_consultas(Listaconsultas* listac, Listapacientes* listap, Listamedicos* listam){
-    Consulta* c = malloc(sizeof(Consulta));
+    Consulta *c = malloc(sizeof(Consulta));
+    if (c == NULL){
+        printf("Erro ao alocar memoria para a consulta.\n");
+        return;
+    }
     c->medico = NULL;
     c->paciente = NULL;
     preenche_consulta(c, listap, listam);
+
     if (c->medico == NULL || c->paciente == NULL)
     {
         free(c);
@@ -273,22 +291,35 @@ void preenche_consulta(Consulta* c, Listapacientes* listap, Listamedicos* listam
     }
 
     preenche_data(&c->data);
-    printf("\nDigite seu Convênio: ");
-    getchar();
-    fgets(c->convenio, sizeof(c->convenio), stdin);
-    c->status = true; //true = agendado
+    printf("Digite seu convenio: ");
+    limpar_buffer();
+    ler_linha(c->convenio, sizeof(c->convenio));
 
+    c->status = true;
+    c->descricao[0] = '\0';
 }
 
-bool verifica_repeticao(Listaconsultas * listac, char cpf[], int dia, int mes, int ano, int hora, int min){
+bool verifica_repeticao(Listaconsultas *listac, char cpf[], int dia, int mes, int ano, int hora, int min){
     Consulta *p = listac->inicio;
-    while(p!= NULL){
-        if(strcmp(cpf, p->paciente->cpf) == 0 && dia == p->data.dia && mes == p->data.mes && ano == p->data.ano && hora == p->data.hora && min == p->data.min){
-            printf("Consulta já agendada!\n");
+
+    while (p != NULL)
+    {
+        if (p->status == true &&
+            p->paciente != NULL &&
+            strcmp(cpf, p->paciente->cpf) == 0 &&
+            p->data.dia == dia &&
+            p->data.mes == mes &&
+            p->data.ano == ano &&
+            p->data.hora == hora &&
+            p->data.min == min)
+        {
+            printf("Consulta ja agendada!\n");
             return true;
         }
+
         p = p->prox;
     }
+
     return false;
 }
 
@@ -306,41 +337,78 @@ void preenche_data(Data *data){
 }
 
 
-void desmarca_consultas(Listaconsultas * listac, char cpf[], int dia, int mes, int ano, int hora, int min){
+void desmarca_consultas(Listaconsultas *listac, char cpf[], int dia, int mes, int ano, int hora, int min){
     Consulta *p = listac->inicio;
-    while(p!= NULL){
-        if(strcmp(cpf, p->paciente->cpf) == 0 && dia == p->data.dia && mes == p->data.mes && ano == p->data.ano && hora == p->data.hora && min == p->data.min){
-            if(p->ant != NULL){
+    bool realizada = false;
+
+    while (p != NULL){
+        if (p->paciente != NULL && strcmp(cpf, p->paciente->cpf) == 0 && p->data.dia == dia && p->data.mes == mes && p->data.ano == ano && p->data.hora == hora && p->data.min == min){
+            if (p->status == false){
+                realizada = true;
+                p = p->prox;
+                continue;
+            }
+
+            if (p->ant != NULL){
                 p->ant->prox = p->prox;
             }
             else{
                 listac->inicio = p->prox;
             }
-            if(p->prox != NULL){
+            if (p->prox != NULL){
                 p->prox->ant = p->ant;
             }
+
             free(p);
             printf("Consulta desmarcada com sucesso!\n");
             return;
         }
+ 
         p = p->prox;
+    }
+
+    if (realizada)
+    {
+        printf("Essa consulta ja foi realizada e nao pode ser desmarcada.\n");
+    }
+    else
+    {
+        printf("Consulta nao encontrada!\n");
     }
 }
 
-void consultar(Listaconsultas * listac, char cpf[], int dia, int mes, int ano, int hora, int min){
+void consultar(Listaconsultas *listac, char cpf[], int dia, int mes, int ano, int hora, int min){
     Consulta *p = listac->inicio;
-    while(p!= NULL){
-        if(strcmp(cpf, p->paciente->cpf) == 0 && dia == p->data.dia && mes == p->data.mes && ano == p->data.ano && hora == p->data.hora && min == p->data.min){
-            printf("Consulta encontrada!\n");
-            printf("Preencha a descrição e prognóstico da consulta: ");
-            getchar();
-            fgets(p->descricao, sizeof(p->descricao), stdin);
-            p->status = false; //false = consulta realizada;
+    bool realizada = false;
+    while (p != NULL){
+        if (p->paciente != NULL && strcmp(cpf, p->paciente->cpf) == 0 && p->data.dia == dia && p->data.mes == mes && p->data.ano == ano && p->data.hora == hora && p->data.min == min){
+            
+            if (p->status == false){
+                realizada = true;
+                p = p->prox;
+                continue;
+            }
+            printf("Digite a descricao da consulta: ");
+            limpar_buffer();
+            ler_linha(p->descricao, sizeof(p->descricao));
+
+            p->status = false;
+
+            printf("Consulta registrada como realizada!\n");
             return;
         }
+
         p = p->prox;
     }
-    printf("Consulta não encontrada!\n");
+
+    if (realizada)
+    {
+        printf("Essa consulta ja foi realizada.\n");
+    }
+    else
+    {
+        printf("Consulta nao encontrada!\n");
+    }
 }
 
 void listar_consultas(Listaconsultas * listac){
@@ -366,49 +434,63 @@ void listar_consultas(Listaconsultas * listac){
 //---------------------------//----------------------------//
 //--------- Códigos para relatórios ---------//
 
-void relatorio1(Listaconsultas * listac, int dia, int mes, int ano){
+void relatorio1(Listaconsultas *listac, int dia, int mes, int ano)
+{
     Consulta *p = listac->inicio;
-    printf("Relatório de consultas do dia %d/%d/%d:\n", dia, mes, ano);
-    while(p!= NULL){
-        if(p->data.dia == dia && p->data.mes == mes && p->data.ano == ano){
+    bool encontrou = false;
+
+    printf("Consultas agendadas em %02d/%02d/%d:\n", dia, mes, ano);
+
+    while (p != NULL)
+    {
+        if (p->status == true &&
+            p->data.dia == dia &&
+            p->data.mes == mes &&
+            p->data.ano == ano)
+        {
             printf("Paciente: %s\n", p->paciente->nome);
-            printf("Médico: %s\n", p->medico->nome);
-            printf("Data: %d/%d/%d\n", p->data.dia, p->data.mes, p->data.ano);
-            printf("Hora: %d:%d\n", p->data.hora, p->data.min);
-            printf("Convênio: %s\n", p->convenio);
-            if(p->status == true){
-                printf("Status: Agendada\n");
-            }
-            else{
-                printf("Status: Realizada\n");
-                printf("Descrição: %s\n", p->descricao);
-            }
+            printf("Medico: %s\n", p->medico->nome);
+            printf("Horario: %02d:%02d\n", p->data.hora, p->data.min);
+            printf("Convenio: %s\n", p->convenio);
             printf("----------------\n");
+
+            encontrou = true;
         }
+
         p = p->prox;
+    }
+
+    if (!encontrou)
+    {
+        printf("Nenhuma consulta agendada nessa data.\n");
     }
 }
 
-void relatorio2(Listaconsultas * listac, char nome[]){
+void relatorio2(Listaconsultas *listac, char nome[])
+{
     Consulta *p = listac->inicio;
-    printf("Relatório de consultas do paciente %s:\n", nome);
-    while(p!= NULL){
-        if(strcmp(p->paciente->nome, nome) == 0){
-            printf("Paciente: %s\n", p->paciente->nome);
-            printf("Médico: %s\n", p->medico->nome);
-            printf("Data: %d/%d/%d\n", p->data.dia, p->data.mes, p->data.ano);
-            printf("Hora: %d:%d\n", p->data.hora, p->data.min);
-            printf("Convênio: %s\n", p->convenio);
-            if(p->status == true){
-                printf("Status: Agendada\n");
-            }
-            else{
-                printf("Status: Realizada\n");
-                printf("Descrição: %s\n", p->descricao);
-            }
+    bool encontrou = false;
+
+    printf("Consultas realizadas por %s:\n", nome);
+
+    while (p != NULL)
+    {
+        if (p->status == false && p->paciente != NULL && strcmp(p->paciente->nome, nome) == 0)
+        {
+            printf("Medico: %s\n", p->medico->nome);
+            printf("Data: %02d/%02d/%d\n", p->data.dia, p->data.mes, p->data.ano);
+            printf("Horario: %02d:%02d\n", p->data.hora, p->data.min);
+            printf("Descricao: %s\n", p->descricao);
             printf("----------------\n");
+
+            encontrou = true;
         }
+
         p = p->prox;
+    }
+    if (!encontrou)
+    {
+        printf("Nenhuma consulta realizada encontrada para esse paciente.\n");
     }
 }
 
@@ -429,35 +511,146 @@ void relatorio3(Listaconsultas * listac, char nome[], int dia, int mes, int ano,
     }
 }
 
-void relatorio4(Listaconsultas * listac, char especialidade[], int mes){
+void relatorio4(Listaconsultas *listac, char especialidade[], int mes){
     Consulta *p = listac->inicio;
-    printf("Relatório dos nomes dos pacientes que realizaram consultas do mês %d para a especialidade %s:\n", mes, especialidade);
-    while(p!= NULL){
-        if(strcmp(p->medico->especialidade, especialidade) == 0 && p->data.mes == mes){
-            printf("Paciente: %s\n", p->paciente->nome);
-            printf("----------------\n");
+    bool encontrou = false;
+    printf("Pacientes atendidos na especialidade %s no mes %d:\n",  especialidade, mes);
+
+    while (p != NULL){
+        if (p->status == false && p->medico != NULL &&  p->paciente != NULL && strcmp(p->medico->especialidade, especialidade) == 0 && p->data.mes == mes){
+            bool repetido = false;
+            Consulta *q = listac->inicio;
+
+            while (q != p){
+                if (q->status == false && q->paciente == p->paciente && q->medico != NULL && strcmp(q->medico->especialidade, especialidade) == 0 && q->data.mes == mes){
+                    repetido = true;
+                    break;
+                }
+
+                q = q->prox;
+            }
+
+            if (!repetido)
+            {
+                printf("Paciente: %s\n", p->paciente->nome);
+                encontrou = true;
+            }
         }
-        p = p->prox;    
+
+        p = p->prox;
+    }
+
+    if (!encontrou)
+    {
+        printf("Nenhum paciente encontrado nesse mes e especialidade.\n");
     }
 }
 
-void relatorio5(Listaconsultas * listac, Listamedicos * listam){
-    Consulta *p;
+void relatorio5(Listaconsultas *listac, Listamedicos *listam){
     medicos *m = listam->inicio;
+
+    if(m == NULL){
+        printf("Nenhum medico cadastrado.\n");
+        return;
+    }
+
     while(m != NULL){
-            p = listac->inicio;
-            printf("Relatório das consultas do médico %s:\n", m->nome);
-            while(p!= NULL){
-                if(p->medico == m){
-                    printf("Paciente: %s\n", p->paciente->nome);
-                    printf("----------------\n");
+        Consulta *p = listac->inicio;
+        bool encontrou = false;
+
+        printf("\nPacientes atendidos pelo medico %s:\n", m->nome);
+
+        while(p != NULL){
+            if (p->status == false && p->medico == m && p->paciente != NULL){
+                bool repetido = false;
+                Consulta *q = listac->inicio;
+
+                while(q != p){
+                    if(q->status == false && q->medico == m && q->paciente == p->paciente){
+                        repetido = true;
+                        break;
+                    }
+                    q = q->prox;
                 }
-                p = p->prox;
+
+                if(!repetido){
+                    printf("Paciente: %s\n", p->paciente->nome);
+                    encontrou = true;
+                }
+            }
+
+            p = p->prox;
+        }
+
+        if (!encontrou)
+        {
+            printf("Nenhum atendimento realizado por esse medico.\n");
         }
         m = m->prox;
     }
-    if (listam->inicio == NULL)
+}
+void limpar_buffer(void){
+    int c;
+
+    while ((c = getchar()) != '\n' && c != EOF)
+    {}
+}
+void ler_linha(char texto[], size_t tamanho){
+    if (fgets(texto, tamanho, stdin) == NULL)
     {
-        printf("Médico não encontrado!\n");
+        texto[0] = '\0';
+        return;
     }
+
+    if (strchr(texto, '\n') == NULL)
+    {
+        limpar_buffer();
+    }
+
+    texto[strcspn(texto, "\n")] = '\0';
+}
+void liberar_lista_medicos(Listamedicos *lista){
+    if(lista == NULL){
+        return;
+    }
+    medicos *p = lista->inicio;
+
+    while(p != NULL){
+        medicos *prox = p->prox;
+        free(p);
+        p = prox;
+    }
+
+    free(lista);
+}
+
+void liberar_lista_pacientes(Listapacientes *lista){
+    if(lista == NULL){
+        return;
+    }
+
+    pacientes *p = lista->inicio;
+
+    while(p != NULL){
+        pacientes *prox = p->prox;
+        free(p);
+        p = prox;
+    }
+
+    free(lista);
+}
+
+void liberar_lista_consultas(Listaconsultas *lista){
+    if(lista == NULL){
+        return;
+    }
+    Consulta *p = lista->inicio;
+
+    while(p != NULL){
+        Consulta *prox = p->prox;
+        free(p);
+        p = prox;
+    }
+
+    free(lista);
 }

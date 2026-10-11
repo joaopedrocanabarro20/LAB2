@@ -86,3 +86,10 @@ void relatorio2(Listaconsultas * listac, char nome[]);
 void relatorio3(Listaconsultas * listac, char nome[], int dia, int mes, int ano, int hora, int min);
 void relatorio4(Listaconsultas * listac, char especialidade[], int mes);
 void relatorio5(Listaconsultas * listac, Listamedicos * listam);
+
+//funções que auxiliam
+void limpar_buffer(void);
+void ler_linha(char texto[], size_t tamanho);
+void liberar_lista_medicos(Listamedicos *lista);
+void liberar_lista_pacientes(Listapacientes *lista);
+void liberar_lista_consultas(Listaconsultas *lista);

@@ -36,6 +36,16 @@ int main(){
     Listapacientes * listaPacientes = criar_lista_pacientes();
     Listaconsultas * listaConsultas = criar_lista_consultas();
 
+    if (listaMedicos == NULL || listaPacientes == NULL || listaConsultas == NULL){
+    printf("Erro ao criar as listas.\n");
+
+    liberar_lista_consultas(listaConsultas);
+    liberar_lista_pacientes(listaPacientes);
+    liberar_lista_medicos(listaMedicos);
+
+    return 1;
+}
+
     int opcao;
 
     do {
@@ -60,7 +70,7 @@ int main(){
             case 6: {
                 printf("Digite o CPF do paciente:\n ");
                 char cpf[15];
-                scanf("%s", cpf);
+                scanf("%14s", cpf);
                 printf("Digite a data da consulta (dia mes ano hora minuto): \n");
                 int dia, mes, ano, hora, min;
                 scanf("%d %d %d %d %d", &dia, &mes, &ano, &hora, &min);
@@ -78,31 +88,45 @@ int main(){
                 break;
             }
             case 9: {
-                printf("Digite o nome do paciente:\n");
                 char nome[20];
-                getchar();
-                fgets(nome, sizeof(nome), stdin);   
+
+                printf("Digite o nome do paciente:\n");
+                limpar_buffer();
+                ler_linha(nome, sizeof(nome));
                 relatorio2(listaConsultas, nome);
                 break;
             }
-            case 10: {
-                printf("Digite o nome do paciente e a data da consulta (dia mes ano hora minuto): \n");
+            case 10:{
                 char nome[20];
                 int dia, mes, ano, hora, min;
-                getchar(); 
-                fgets(nome, sizeof(nome), stdin);
+
+                printf("Digite o nome do paciente:\n");
+                limpar_buffer();
+                ler_linha(nome, sizeof(nome));
+
+                printf("Digite dia, mes, ano, hora e minuto:\n");
                 scanf("%d %d %d %d %d", &dia, &mes, &ano, &hora, &min);
+
                 relatorio3(listaConsultas, nome, dia, mes, ano, hora, min);
                 break;
             }
             case 11: {
-                printf("Digite a especialidade do medico e o mes (1-12):\n");
-                char especialidade[50];
+                char especialidade[20];
                 int mes;
-                getchar();
-                scanf("%49s", especialidade);
+                printf("Digite a especialidade do medico:\n");
+                limpar_buffer();
+                ler_linha(especialidade, sizeof(especialidade));
+
+                printf("Digite o mes (1-12):\n");
                 scanf("%d", &mes);
-                relatorio4(listaConsultas, especialidade, mes);
+
+                if (mes >= 1 && mes <= 12){
+                    relatorio4(listaConsultas, especialidade, mes);
+                }
+                else{
+                    printf("Mes invalido!\n");
+                }
+
                 break;
             }
             case 12:
@@ -125,7 +149,12 @@ int main(){
             default:
                 printf("Opcao invalida! Tente novamente.\n");
         }
-    } while (opcao != 0);
+    }while(opcao != 0);
 
-    return 0;
+
+    liberar_lista_consultas(listaConsultas);
+    liberar_lista_pacientes(listaPacientes);
+    liberar_lista_medicos(listaMedicos);
+
+    return 0;   
 }
