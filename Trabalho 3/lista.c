@@ -466,16 +466,16 @@ void relatorio1(Listaconsultas *listac, int dia, int mes, int ano)
     }
 }
 
-void relatorio2(Listaconsultas *listac, char nome[])
+void relatorio2(Listaconsultas *listac, char cpf[])
 {
     Consulta *p = listac->inicio;
     bool encontrou = false;
 
-    printf("Consultas realizadas por %s:\n", nome);
+    printf("Consultas realizadas pelo paciente com CPF %s:\n", cpf);
 
     while (p != NULL)
     {
-        if (p->status == false && p->paciente != NULL && strcmp(p->paciente->nome, nome) == 0)
+        if (p->status == false && p->paciente != NULL && strcmp(p->paciente->cpf, cpf) == 0)
         {
             printf("Medico: %s\n", p->medico->nome);
             printf("Data: %02d/%02d/%d\n", p->data.dia, p->data.mes, p->data.ano);
@@ -494,11 +494,11 @@ void relatorio2(Listaconsultas *listac, char nome[])
     }
 }
 
-void relatorio3(Listaconsultas * listac, char nome[], int dia, int mes, int ano, int hora, int min){
+void relatorio3(Listaconsultas * listac, char cpf[], int dia, int mes, int ano, int hora, int min){
     Consulta *p = listac->inicio;
-    printf("Descrição da consulta do paciente %s no dia %d/%d/%d às %d:%d:\n", nome, dia, mes, ano, hora, min);
+    printf("Descrição da consulta do paciente %s no dia %d/%d/%d às %d:%d:\n", cpf, dia, mes, ano, hora, min);
     while(p!= NULL){
-        if(strcmp(p->paciente->nome, nome) == 0 && p->data.dia == dia && p->data.mes == mes && p->data.ano == ano && p->data.hora == hora && p->data.min == min){
+        if(strcmp(p->paciente->cpf, cpf) == 0 && p->data.dia == dia && p->data.mes == mes && p->data.ano == ano && p->data.hora == hora && p->data.min == min){
             if(p->status == true){
                 printf("A consulta ainda não foi realizada. Status: Agendada\n");
             }
@@ -511,18 +511,18 @@ void relatorio3(Listaconsultas * listac, char nome[], int dia, int mes, int ano,
     }
 }
 
-void relatorio4(Listaconsultas *listac, char especialidade[], int mes){
+void relatorio4(Listaconsultas *listac, char especialidade[], int mes, int ano){
     Consulta *p = listac->inicio;
     bool encontrou = false;
-    printf("Pacientes atendidos na especialidade %s no mes %d:\n",  especialidade, mes);
+    printf("Pacientes atendidos na especialidade %s no mes %d do ano de %d:\n",  especialidade, mes, ano);
 
     while (p != NULL){
-        if (p->status == false && p->medico != NULL &&  p->paciente != NULL && strcmp(p->medico->especialidade, especialidade) == 0 && p->data.mes == mes){
+        if (p->status == false && p->medico != NULL &&  p->paciente != NULL && strcmp(p->medico->especialidade, especialidade) == 0 && p->data.mes == mes && p->data.ano == ano){
             bool repetido = false;
             Consulta *q = listac->inicio;
 
             while (q != p){
-                if (q->status == false && q->paciente == p->paciente && q->medico != NULL && strcmp(q->medico->especialidade, especialidade) == 0 && q->data.mes == mes){
+                if (q->status == false && q->paciente == p->paciente && q->medico != NULL && strcmp(q->medico->especialidade, especialidade) == 0 && q->data.mes == mes && q->data.ano == ano){
                     repetido = true;
                     break;
                 }

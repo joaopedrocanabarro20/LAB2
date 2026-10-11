@@ -5,15 +5,15 @@
 
 typedef struct medicos{
     char crm[7];
-    char nome[20];
-    char especialidade[20];
+    char nome[60];
+    char especialidade[60];
     char telefone[13];
     struct medicos *prox;
 }medicos;
 
 typedef struct pacientes{
     char cpf[15];
-    char nome[20];
+    char nome[60];
     char telefone[13];
     struct pacientes *prox;
 }pacientes;
@@ -82,9 +82,9 @@ bool verificamedico_ocupado(Listaconsultas* lista, Consulta* c);
 
 //Relatórios
 void relatorio1(Listaconsultas * listac, int dia, int mes, int ano);
-void relatorio2(Listaconsultas * listac, char nome[]);
-void relatorio3(Listaconsultas * listac, char nome[], int dia, int mes, int ano, int hora, int min);
-void relatorio4(Listaconsultas * listac, char especialidade[], int mes);
+void relatorio2(Listaconsultas * listac, char cpf[]);
+void relatorio3(Listaconsultas * listac, char cpf[], int dia, int mes, int ano, int hora, int min);
+void relatorio4(Listaconsultas * listac, char especialidade[], int mes, int ano);
 void relatorio5(Listaconsultas * listac, Listamedicos * listam);
 
 //funções que auxiliam

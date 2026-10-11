@@ -23,7 +23,7 @@ void exibir_menu(void) {
     printf("|    [8]  R1 - Consultas agendadas em um dia                   |\n");
     printf("|    [9]  R2 - Consultas realizadas por paciente               |\n");
     printf("|    [10] R3 - Descricao de uma consulta                       |\n");
-    printf("|    [11] R4 - Pacientes por especialidade e mes               |\n");
+    printf("|    [11] R4 - Pacientes por especialidade, mes e ano          |\n");
     printf("|    [12] R5 - Pacientes atendidos por cada medico             |\n");
     printf("+--------------------------------------------------------------+\n");
     printf("|    [0]  Sair                                                 |\n");
@@ -88,30 +88,30 @@ int main(){
                 break;
             }
             case 9: {
-                char nome[20];
+                char cpf[15];
 
-                printf("Digite o nome do paciente:\n");
+                printf("Digite o CPF do paciente:\n");
                 limpar_buffer();
-                ler_linha(nome, sizeof(nome));
-                relatorio2(listaConsultas, nome);
+                ler_linha(cpf, sizeof(cpf));
+                relatorio2(listaConsultas, cpf);
                 break;
             }
             case 10:{
-                char nome[20];
+                char cpf[15];
                 int dia, mes, ano, hora, min;
 
-                printf("Digite o nome do paciente:\n");
+                printf("Digite o CPF do paciente:\n");
                 limpar_buffer();
-                ler_linha(nome, sizeof(nome));
+                ler_linha(cpf, sizeof(cpf));
 
                 printf("Digite dia, mes, ano, hora e minuto:\n");
                 scanf("%d %d %d %d %d", &dia, &mes, &ano, &hora, &min);
 
-                relatorio3(listaConsultas, nome, dia, mes, ano, hora, min);
+                relatorio3(listaConsultas, cpf, dia, mes, ano, hora, min);
                 break;
             }
             case 11: {
-                char especialidade[20];
+                char especialidade[60];
                 int mes;
                 printf("Digite a especialidade do medico:\n");
                 limpar_buffer();
@@ -121,7 +121,10 @@ int main(){
                 scanf("%d", &mes);
 
                 if (mes >= 1 && mes <= 12){
-                    relatorio4(listaConsultas, especialidade, mes);
+                    printf("Digite o ano:\n");
+                    int ano;
+                    scanf("%d", &ano);
+                    relatorio4(listaConsultas, especialidade, mes, ano);
                 }
                 else{
                     printf("Mes invalido!\n");
