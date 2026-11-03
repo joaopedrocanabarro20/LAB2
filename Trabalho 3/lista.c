@@ -633,7 +633,7 @@ void liberar_lista_pacientes(Listapacientes *lista){
 
     while(p != NULL){
         pacientes *prox = p->prox;
-        free(p);
+        free(p); 
         p = prox;
     }
 
