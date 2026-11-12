@@ -31,6 +31,11 @@ struct fila{
 };
 
 Mesa** inicializa_mesa(int l, int c){
+    if (l <= 0 || c <= 0)
+    {
+        return NULL;
+    }
+    
     Mesa** mesas = malloc(sizeof(Mesa*)*l);
     if (mesas == NULL)
     {
@@ -42,10 +47,11 @@ Mesa** inicializa_mesa(int l, int c){
         mesas[i] = malloc(sizeof(Mesa) * c);
         if (mesas[i] == NULL)
         {
-            for (int i = 0; i < l; i++)
+            for (int j = 0; j < i; j++)
             {
-                free(mesas[i]);
+                free(mesas[j]);
             }
+            free(mesas);
             return NULL;
         }
     }
@@ -62,6 +68,10 @@ Mesa** inicializa_mesa(int l, int c){
         }
     }
     return mesas;
+}
+
+void libera_mesa(Mesa** mesas, int l){
+    
 }
 
 
