@@ -82,17 +82,58 @@ Pilha* inicializa_pilha_pratos(void){
 
 void push_pratos(Pilha* pratos){
     Prato* novo_prato = malloc(sizeof(Prato));
-    if (novo_prato == NULL)
-    {
-        pratos->topo = novo_prato;
-        pratos->quantidade += 1;
-    }
-    
+    if (novo_prato == NULL) return;
+    novo_prato->prox = pratos->topo;
+    pratos->topo = novo_prato;
+    pratos->quantidade++;
 
 }
 
+void repor_pratos (Pilha* p, int quantidade)
+{
+    for (int i = 0; i < quantidade; i++)
+    {
+        push_pratos(p);
+    }
+    printf("Pratos na pilha: %d\n", p->quantidade);
+    
+}
 
 
+static Mesa* mesa_livre(Mesa** mesas, int l, int c)
+{
+    for (int i = 0; i < l; i++)
+    {
+        for (int j = 0; j < c; j++)
+        {
+            if (!mesas[i][j].ocupado)
+            {
+                return &mesas[i][j];
+            }
+            
+        }
+        
+    }
+    return NULL;
+    
+}
 
+static void ocupa_mesa(Mesa* m, int n, Pilha* p)
+{
+    m->ocupado = true;
+    m->pessoas = n;
+    m->comanda = m->identificacao;
 
-
+    while (m->pratos > n)
+    {
+        push_pratos(p);
+        m->pratos--;
+    }
+    while (m->pratos < n && p->topo != NULL)
+    {
+        //falta funcao de pop
+        m->pratos++;
+    }
+    printf("Mesa %d ocupada por %d pessoa(s).\n", m->identificacao, n);
+    
+}
