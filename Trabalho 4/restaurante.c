@@ -13,13 +13,16 @@ struct mesa
     int pratos;
 };
 
-struct pratos{
-    bool limpo;
+typedef struct pratos {
     struct pratos* prox;
-};
+} Prato;
 
-struct fila
-{
+typedef struct pilha {
+    Prato* topo;
+    int quantidade;
+} Pilha;
+
+struct fila{
     struct fila* ini;
     struct fila* fim;
     struct fila* prox;
@@ -29,9 +32,22 @@ struct fila
 
 Mesa** inicializa_mesa(int l, int c){
     Mesa** mesas = malloc(sizeof(Mesa*)*l);
+    if (mesas == NULL)
+    {
+        return NULL;
+    }
+    
     for (int i = 0; i < l; i++)
     {
-        Mesa* mesas = malloc(sizeof(Mesa)*c);
+        mesas[i] = malloc(sizeof(Mesa) * c);
+        if (mesas[i] == NULL)
+        {
+            for (int i = 0; i < l; i++)
+            {
+                free(mesas[i]);
+            }
+            return NULL;
+        }
     }
 
     for (int i = 0; i < l; i++)
@@ -42,10 +58,13 @@ Mesa** inicializa_mesa(int l, int c){
             mesas[i][j].pessoas = 0;
             mesas[i][j].comanda = 0;
             mesas[i][j].pratos = 4;
+            mesas[i][j].identificacao = i * c + j + 1;
         }
-        
-    } 
+    }
+    return mesas;
 }
+
+
 
 
 
