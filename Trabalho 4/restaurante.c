@@ -80,6 +80,17 @@ Pilha* inicializa_pilha_pratos(void){
     return NULL;
 }
 
+void push_pratos(Pilha* pratos){
+    Prato* novo_prato = malloc(sizeof(Prato));
+    if (novo_prato == NULL)
+    {
+        pratos->topo = novo_prato;
+        pratos->quantidade += 1;
+    }
+    
+
+}
+
 
 
 
