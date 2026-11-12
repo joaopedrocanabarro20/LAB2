@@ -47,13 +47,10 @@ Mesa** inicializa_mesa(int l, int c){
         mesas[i] = malloc(sizeof(Mesa) * c);
         if (mesas[i] == NULL)
         {
-            for (int j = 0; j < i; j++)
-            {
-                free(mesas[j]);
-            }
-            free(mesas);
+            libera_mesa(mesas, i);
             return NULL;
         }
+        
     }
 
     for (int i = 0; i < l; i++)
@@ -71,7 +68,16 @@ Mesa** inicializa_mesa(int l, int c){
 }
 
 void libera_mesa(Mesa** mesas, int l){
-    
+    if (mesas == NULL)
+    return;
+    for (int j = 0; j < l; j++){
+        free(mesas[j]);
+    }
+    free(mesas);
+}
+
+Pilha* inicializa_pilha_pratos(void){
+    return NULL;
 }
 
 
