@@ -70,7 +70,7 @@ int main()
         case 3:
             printf("Numero da mesa: ");
             scanf("%d", &y);
-            // funcao de acabar a refeicao
+            // funcao    de acabar a refeicao
             break;
 
         case 4:
@@ -93,8 +93,7 @@ int main()
     if (mesas != NULL)
     {
         libera_mesa(mesas, l);
-        // libera_pilha
-        // libera_fila
+
     }
     return 0;
 }
