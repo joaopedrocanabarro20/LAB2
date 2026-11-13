@@ -13,35 +13,39 @@ struct mesa
     int pratos;
 };
 
-typedef struct pratos {
-    struct pratos* prox;
+typedef struct pratos
+{
+    struct pratos *prox;
 } Prato;
 
-typedef struct pilha {
-    Prato* topo;
+typedef struct pilha
+{
+    Prato *topo;
     int quantidade;
 } Pilha;
 
-struct fila{
-    struct fila* ini;
-    struct fila* fim;
-    struct fila* prox;
+struct fila
+{
+    struct fila *ini;
+    struct fila *fim;
+    struct fila *prox;
     int ident;
     int pessoas;
 };
 
-Mesa** inicializa_mesa(int l, int c){
+Mesa **inicializa_mesa(int l, int c)
+{
     if (l <= 0 || c <= 0)
     {
         return NULL;
     }
-    
-    Mesa** mesas = malloc(sizeof(Mesa*)*l);
+
+    Mesa **mesas = malloc(sizeof(Mesa *) * l);
     if (mesas == NULL)
     {
         return NULL;
     }
-    
+
     for (int i = 0; i < l; i++)
     {
         mesas[i] = malloc(sizeof(Mesa) * c);
@@ -50,7 +54,6 @@ Mesa** inicializa_mesa(int l, int c){
             libera_mesa(mesas, i);
             return NULL;
         }
-        
     }
 
     for (int i = 0; i < l; i++)
@@ -67,45 +70,49 @@ Mesa** inicializa_mesa(int l, int c){
     return mesas;
 }
 
-void libera_mesa(Mesa** mesas, int l){
+void libera_mesa(Mesa **mesas, int l)
+{
     if (mesas == NULL)
-    return;
-    for (int j = 0; j < l; j++){
+        return;
+    for (int j = 0; j < l; j++)
+    {
         free(mesas[j]);
     }
     free(mesas);
 }
 
-Pilha* inicializa_pilha_pratos(void){
-    Pilha* p = malloc(sizeof(Pilha));
+Pilha *inicializa_pilha_pratos(void)
+{
+    Pilha *p = malloc(sizeof(Pilha));
 
     if (p == NULL)
         return NULL;
 
     p->topo = NULL;
-    p->quantidade = 0;  
+    p->quantidade = 0;
 
     return p;
 }
 
-void push_pratos(Pilha* pratos){
-    if (pratos == NULL){
+void push_pratos(Pilha *pratos)
+{
+    if (pratos == NULL)
+    {
         return;
     }
-    Prato* novo_prato = malloc(sizeof(Prato));
-    
-    if(novo_prato == NULL){
-        return;  
+    Prato *novo_prato = malloc(sizeof(Prato));
+
+    if (novo_prato == NULL)
+    {
+        return;
     }
-    
 
     novo_prato->prox = pratos->topo;
     pratos->topo = novo_prato;
     pratos->quantidade++;
-
 }
 
-void repor_pratos (Pilha* p, int quantidade)
+void repor_pratos(Pilha *p, int quantidade)
 {
     if (quantidade <= 0)
     {
@@ -115,17 +122,15 @@ void repor_pratos (Pilha* p, int quantidade)
     {
         return;
     }
-    
+
     for (int i = 0; i < quantidade; i++)
     {
         push_pratos(p);
     }
     printf("Pratos na pilha: %d\n", p->quantidade);
-    
 }
 
-
-static Mesa* mesa_livre(Mesa** mesas, int l, int c)
+static Mesa *mesa_livre(Mesa **mesas, int l, int c)
 {
     for (int i = 0; i < l; i++)
     {
@@ -135,15 +140,12 @@ static Mesa* mesa_livre(Mesa** mesas, int l, int c)
             {
                 return &mesas[i][j];
             }
-            
         }
-        
     }
     return NULL;
-    
 }
 
-static void ocupa_mesa(Mesa* m, int n, Pilha* p)
+static void ocupa_mesa(Mesa *m, int n, Pilha *p)
 {
     m->ocupado = true;
     m->pessoas = n;
@@ -156,9 +158,33 @@ static void ocupa_mesa(Mesa* m, int n, Pilha* p)
     }
     while (m->pratos < n && p->topo != NULL)
     {
-        //falta funcao de pop
+        // falta funcao de pop
         m->pratos++;
     }
     printf("Mesa %d ocupada por %d pessoa(s).\n", m->identificacao, n);
+}
+
+void imprimir_pilha(Pilha* p)
+{
+    printf("Pratos na pilha: %d\n", p->quantidade);
+}
+
+void imprimir_mesa(Mesa** mesa, int l, int c, int id)
+{
+    if (id < 1 || id > l *c)
+    {
+        printf("Mesa inexistente.\n");
+        return;
+    }
+    Mesa* m = &mesa[(id - 1) / c][(id-1) % c];
+    if(m->ocupado)
+    {
+        printf("Mesa %d: ocupada, %d pessoa(s), comanda %d\n", m->identificacao, m->pessoas, m->comanda);
+
+    }
+    else
+    {
+        printf("Mesa %d: livre\n", m->identificacao);
+    }
     
 }
