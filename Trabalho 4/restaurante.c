@@ -77,12 +77,27 @@ void libera_mesa(Mesa** mesas, int l){
 }
 
 Pilha* inicializa_pilha_pratos(void){
-    return NULL;
+    Pilha* p = malloc(sizeof(Pilha));
+
+    if (p == NULL)
+        return NULL;
+
+    p->topo = NULL;
+    p->quantidade = 0;  
+
+    return p;
 }
 
 void push_pratos(Pilha* pratos){
     Prato* novo_prato = malloc(sizeof(Prato));
-    if (novo_prato == NULL) return;
+    
+    if(novo_prato == NULL){
+        return;  
+    }
+    
+    if (pratos == NULL){
+        return;
+    }
     novo_prato->prox = pratos->topo;
     pratos->topo = novo_prato;
     pratos->quantidade++;
