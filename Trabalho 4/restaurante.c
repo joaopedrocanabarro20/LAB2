@@ -94,23 +94,44 @@ Pilha *inicializa_pilha_pratos(void)
     return p;
 }
 
-void push_pratos(Pilha *pratos)
+bool push_pratos(Pilha *pratos)
 {
     if (pratos == NULL)
     {
-        return;
+        return false;
     }
     Prato *novo_prato = malloc(sizeof(Prato));
 
     if (novo_prato == NULL)
     {
-        return;
+        return false;
     }
 
     novo_prato->prox = pratos->topo;
     pratos->topo = novo_prato;
     pratos->quantidade++;
+    return true;
 }
+
+bool pop_pratos(Pilha* pratos){
+    if (pratos == NULL)
+    {
+        return false;
+    }
+    Prato* prato_free = pratos->topo;
+    if (prato_free == NULL)
+    {
+        return false;
+    }
+    
+    pratos->topo = prato_free->prox;
+    free(prato_free);
+    pratos->quantidade -= 1;
+
+    return true;
+}
+
+
 
 void repor_pratos(Pilha *p, int quantidade)
 {
@@ -125,7 +146,10 @@ void repor_pratos(Pilha *p, int quantidade)
 
     for (int i = 0; i < quantidade; i++)
     {
-        push_pratos(p);
+        if (!push_pratos(p))
+        {
+            return;
+        }
     }
     printf("Pratos na pilha: %d\n", p->quantidade);
 }

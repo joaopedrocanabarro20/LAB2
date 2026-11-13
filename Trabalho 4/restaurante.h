@@ -1,9 +1,19 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+
 typedef struct mesa Mesa;
 
 //mesas
 void libera_mesa(Mesa** mesas, int l);
 Mesa** inicializa_mesa(int l, int c);
+static Mesa *mesa_livre(Mesa **mesas, int l, int c);
+static void ocupa_mesa(Mesa *m, int n, Pilha *p);
+void imprimir_mesa(Mesa** mesa, int l, int c, int id);
 
 //pratos
 Pilha* inicializa_pilha_pratos(void);
-void push_pratos(Pilha* pratos);
+bool push_pratos(Pilha* pratos);
+void repor_pratos(Pilha *p, int quantidade);
+void imprimir_pilha(Pilha* p);
