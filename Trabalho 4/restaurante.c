@@ -89,15 +89,16 @@ Pilha* inicializa_pilha_pratos(void){
 }
 
 void push_pratos(Pilha* pratos){
+    if (pratos == NULL){
+        return;
+    }
     Prato* novo_prato = malloc(sizeof(Prato));
     
     if(novo_prato == NULL){
         return;  
     }
     
-    if (pratos == NULL){
-        return;
-    }
+
     novo_prato->prox = pratos->topo;
     pratos->topo = novo_prato;
     pratos->quantidade++;
@@ -106,6 +107,15 @@ void push_pratos(Pilha* pratos){
 
 void repor_pratos (Pilha* p, int quantidade)
 {
+    if (quantidade <= 0)
+    {
+        return;
+    }
+    if (p == NULL)
+    {
+        return;
+    }
+    
     for (int i = 0; i < quantidade; i++)
     {
         push_pratos(p);
