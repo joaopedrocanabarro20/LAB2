@@ -18,11 +18,11 @@ typedef struct pratos
     struct pratos *prox;
 } Prato;
 
-typedef struct pilha
+ struct pilha
 {
     Prato *topo;
     int quantidade;
-} Pilha;
+};
 
 struct fila
 {
@@ -32,6 +32,8 @@ struct fila
     int ident;
     int pessoas;
 };
+
+//MESA 
 
 Mesa **inicializa_mesa(int l, int c)
 {
@@ -80,6 +82,8 @@ void libera_mesa(Mesa **mesas, int l)
     }
     free(mesas);
 }
+
+//PRATOS
 
 Pilha *inicializa_pilha_pratos(void)
 {
@@ -159,44 +163,49 @@ void repor_pratos(Pilha *p, int quantidade)
     printf("Total na pilha: %d\n", p->quantidade);
 }
 
-static Mesa *mesa_livre(Mesa **mesas, int l, int c)
-{
-    for (int i = 0; i < l; i++)
-    {
-        for (int j = 0; j < c; j++)
-        {
-            if (!mesas[i][j].ocupado)
-            {
-                return &mesas[i][j];
-            }
-        }
-    }
-    return NULL;
-}
 
-static void ocupa_mesa(Mesa *m, int n, Pilha *p)
-{
-    m->ocupado = true;
-    m->pessoas = n;
-    m->comanda = m->identificacao;
-
-    while (m->pratos > n)
-    {
-        push_pratos(p);
-        m->pratos--;
-    }
-    while (m->pratos < n && p->topo != NULL)
-    {
-        // falta funcao de pop
-        m->pratos++;
-    }
-    printf("Mesa %d ocupada por %d pessoa(s).\n", m->identificacao, n);
-}
 
 void imprimir_pilha(Pilha* p)
 {
     printf("Pratos na pilha: %d\n", p->quantidade);
 }
+
+void libera_pilha(Pilha* p)
+{
+    if (p == NULL)
+    {
+        return;
+    }
+    
+    Prato* pratos = p->topo;
+
+    while (pratos != NULL)
+    {
+        Prato* prato_aux = pratos;
+        pratos=pratos->prox;
+        free(prato_aux);
+    }
+    free(p);
+}
+
+//FILA
+Fila *inicializa_fila(void)
+{
+    Fila *f = malloc(sizeof(Fila));
+    if(f == NULL)
+    {
+        return NULL;
+    }
+    f->ini = NULL;
+    f->fim == NULL;
+    f->prox == NULL;
+    f->ident = 1;
+    f->pessoas = 0;
+    return f;
+}
+
+
+//imprimir mesa
 
 void imprimir_mesa(Mesa** mesa, int l, int c, int id)
 {
@@ -217,22 +226,6 @@ void imprimir_mesa(Mesa** mesa, int l, int c, int id)
     }
     
 }
-void libera_pilha(Pilha* p){
-    if (p == NULL)
-    {
-        return;
-    }
-    
-    Prato* pratos = p->topo;
-
-    while (pratos != NULL)
-    {
-        Prato* prato_aux = pratos;
-        pratos=pratos->prox;
-        free(prato_aux);
-    }
-    free(p);
-}
 void imprimir_todas_mesas(Mesa** mesas, int l, int c){
     if (l <= 0 || c <= 0)
     {
@@ -250,3 +243,37 @@ void imprimir_todas_mesas(Mesa** mesas, int l, int c){
         imprimir_mesa(mesas, l, c, i);
     }
 }
+//operacao
+static Mesa *mesa_livre(Mesa **mesas, int l, int c)
+{
+    for (int i = 0; i < l; i++)
+    {
+        for (int j = 0; j < c; j++)
+        {
+            if (!mesas[i][j].ocupado)
+            {
+                return &mesas[i][j];
+            }
+        }
+    }
+    return NULL;
+}
+    
+    static void ocupa_mesa(Mesa *m, int n, Pilha *p)
+    {
+        m->ocupado = true;
+        m->pessoas = n;
+        m->comanda = m->identificacao;
+        
+        while (m->pratos > n)
+        {
+            push_pratos(p);
+            m->pratos--;
+        }
+        while (m->pratos < n && p->topo != NULL)
+        {
+            // falta funcao de pop
+            m->pratos++;
+        }
+        printf("Mesa %d ocupada por %d pessoa(s).\n", m->identificacao, n);
+    }

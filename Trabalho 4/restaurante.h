@@ -4,8 +4,10 @@
 #include <string.h>
 
 typedef struct mesa Mesa;
+typedef struct pilha Pilha;
+typedef struct fila Fila;
 
-//mesas
+//MESAS
 void libera_mesa(Mesa** mesas, int l);
 Mesa** inicializa_mesa(int l, int c);
 static Mesa *mesa_livre(Mesa **mesas, int l, int c);
@@ -14,8 +16,10 @@ void imprimir_mesa(Mesa** mesa, int l, int c, int id);
 void imprimir_todas_mesas(Mesa** mesas, int l, int c);
 
 
-//pratos
+//PRATOS
 Pilha* inicializa_pilha_pratos(void);
 bool push_pratos(Pilha* pratos);
 void repor_pratos(Pilha *p, int quantidade);
 void imprimir_pilha(Pilha* p);
+
+//FILA
