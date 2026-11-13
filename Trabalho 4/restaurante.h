@@ -7,19 +7,21 @@ typedef struct mesa Mesa;
 typedef struct pilha Pilha;
 typedef struct fila Fila;
 
-//MESAS
-void libera_mesa(Mesa** mesas, int l);
-Mesa** inicializa_mesa(int l, int c);
+// MESAS
+void libera_mesa(Mesa **mesas, int l);
+Mesa **inicializa_mesa(int l, int c);
+void imprimir_mesa(Mesa **mesa, int l, int c, int id);
+void imprimir_todas_mesas(Mesa **mesas, int l, int c);
 static Mesa *mesa_livre(Mesa **mesas, int l, int c);
 static void ocupa_mesa(Mesa *m, int n, Pilha *p);
-void imprimir_mesa(Mesa** mesa, int l, int c, int id);
-void imprimir_todas_mesas(Mesa** mesas, int l, int c);
 
-
-//PRATOS
-Pilha* inicializa_pilha_pratos(void);
-bool push_pratos(Pilha* pratos);
+// PRATOS
+Pilha *inicializa_pilha_pratos(void);
+bool push_pratos(Pilha *pratos);
+bool pop_pratos(Pilha* pratos);
 void repor_pratos(Pilha *p, int quantidade);
-void imprimir_pilha(Pilha* p);
-
-//FILA
+void imprimir_pilha(Pilha *p);
+void liberar_pilha(Pilha *p);
+// FILA
+Fila* inicializa_fila(void);
+void liberar_fila(Fila *f);
