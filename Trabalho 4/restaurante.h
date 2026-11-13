@@ -11,6 +11,8 @@ Mesa** inicializa_mesa(int l, int c);
 static Mesa *mesa_livre(Mesa **mesas, int l, int c);
 static void ocupa_mesa(Mesa *m, int n, Pilha *p);
 void imprimir_mesa(Mesa** mesa, int l, int c, int id);
+void imprimir_todas_mesas(Mesa** mesas, int l, int c);
+
 
 //pratos
 Pilha* inicializa_pilha_pratos(void);

@@ -143,15 +143,20 @@ void repor_pratos(Pilha *p, int quantidade)
     {
         return;
     }
+    int adicionados = 0;
+
 
     for (int i = 0; i < quantidade; i++)
     {
         if (!push_pratos(p))
         {
-            return;
+            break;
         }
+        adicionados++;
+
     }
-    printf("Pratos na pilha: %d\n", p->quantidade);
+    printf("Pratos adicionados: %d\n", adicionados);
+    printf("Total na pilha: %d\n", p->quantidade);
 }
 
 static Mesa *mesa_livre(Mesa **mesas, int l, int c)
@@ -211,4 +216,37 @@ void imprimir_mesa(Mesa** mesa, int l, int c, int id)
         printf("Mesa %d: livre\n", m->identificacao);
     }
     
+}
+void libera_pilha(Pilha* p){
+    if (p == NULL)
+    {
+        return;
+    }
+    
+    Prato* pratos = p->topo;
+
+    while (pratos != NULL)
+    {
+        Prato* prato_aux = pratos;
+        pratos=pratos->prox;
+        free(prato_aux);
+    }
+    free(p);
+}
+void imprimir_todas_mesas(Mesa** mesas, int l, int c){
+    if (l <= 0 || c <= 0)
+    {
+        printf("ERRO!\n");
+        return;
+    }
+    if(mesas == NULL)
+    {
+        printf("Matriz de mesas inexistente.\n");
+        return;
+    }
+    
+    for (int i = 1; i <= l*c; i++)
+    {
+        imprimir_mesa(mesas, l, c, i);
+    }
 }
