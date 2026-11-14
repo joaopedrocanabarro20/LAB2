@@ -18,7 +18,7 @@ typedef struct pratos
     struct pratos *prox;
 } Prato;
 
- struct pilha
+struct pilha
 {
     Prato *topo;
     int quantidade;
@@ -28,17 +28,17 @@ typedef struct grupo
 {
     int senha;
     int pessoas;
-    struct grupo* prox;
-}Grupo;
+    struct grupo *prox;
+} Grupo;
 
 struct fila
 {
-    Grupo* ini;
-    Grupo* fim;
+    Grupo *ini;
+    Grupo *fim;
     int proxima_senha;
 };
 
-//MESA 
+// MESA
 
 Mesa **inicializa_mesa(int l, int c)
 {
@@ -88,7 +88,7 @@ void libera_mesa(Mesa **mesas, int l)
     free(mesas);
 }
 
-//PRATOS
+// PRATOS
 
 Pilha *inicializa_pilha_pratos(void)
 {
@@ -122,25 +122,24 @@ bool push_pratos(Pilha *pratos)
     return true;
 }
 
-bool pop_pratos(Pilha* pratos){
+bool pop_pratos(Pilha *pratos)
+{
     if (pratos == NULL)
     {
         return false;
     }
-    Prato* prato_free = pratos->topo;
+    Prato *prato_free = pratos->topo;
     if (prato_free == NULL)
     {
         return false;
     }
-    
+
     pratos->topo = prato_free->prox;
     free(prato_free);
     pratos->quantidade -= 1;
 
     return true;
 }
-
-
 
 void repor_pratos(Pilha *p, int quantidade)
 {
@@ -154,7 +153,6 @@ void repor_pratos(Pilha *p, int quantidade)
     }
     int adicionados = 0;
 
-
     for (int i = 0; i < quantidade; i++)
     {
         if (!push_pratos(p))
@@ -162,40 +160,37 @@ void repor_pratos(Pilha *p, int quantidade)
             break;
         }
         adicionados++;
-
     }
     printf("Pratos adicionados: %d\n", adicionados);
     printf("Total na pilha: %d\n", p->quantidade);
 }
 
-
-
-void imprimir_pilha(Pilha* p)
+void imprimir_pilha(Pilha *p)
 {
     printf("Pratos na pilha: %d\n", p->quantidade);
 }
 
-void libera_pilha(Pilha* p)
+void libera_pilha(Pilha *p)
 {
     if (p == NULL)
     {
         return;
     }
-    
-    Prato* pratos = p->topo;
+
+    Prato *pratos = p->topo;
 
     while (pratos != NULL)
     {
-        Prato* prato_aux = pratos;
-        pratos=pratos->prox;
+        Prato *prato_aux = pratos;
+        pratos = pratos->prox;
         free(prato_aux);
     }
     free(p);
 }
 
-Fila* inicializa_fila(void)
+Fila *inicializa_fila(void)
 {
-    Fila* f = malloc(sizeof(Fila));
+    Fila *f = malloc(sizeof(Fila));
 
     if (f == NULL)
     {
@@ -209,46 +204,44 @@ Fila* inicializa_fila(void)
     return f;
 }
 
+// imprimir mesa
 
-//imprimir mesa
-
-void imprimir_mesa(Mesa** mesa, int l, int c, int id)
+void imprimir_mesa(Mesa **mesa, int l, int c, int id)
 {
-    if (id < 1 || id > l *c)
+    if (id < 1 || id > l * c)
     {
         printf("Mesa inexistente.\n");
         return;
     }
-    Mesa* m = &mesa[(id - 1) / c][(id-1) % c];
-    if(m->ocupado)
+    Mesa *m = &mesa[(id - 1) / c][(id - 1) % c];
+    if (m->ocupado)
     {
         printf("Mesa %d: ocupada, %d pessoa(s), comanda %d\n", m->identificacao, m->pessoas, m->comanda);
-
     }
     else
     {
         printf("Mesa %d: livre\n", m->identificacao);
     }
-    
 }
-void imprimir_todas_mesas(Mesa** mesas, int l, int c){
+void imprimir_todas_mesas(Mesa **mesas, int l, int c)
+{
     if (l <= 0 || c <= 0)
     {
         printf("ERRO!\n");
         return;
     }
-    if(mesas == NULL)
+    if (mesas == NULL)
     {
         printf("Matriz de mesas inexistente.\n");
         return;
     }
-    
-    for (int i = 1; i <= l*c; i++)
+
+    for (int i = 1; i <= l * c; i++)
     {
         imprimir_mesa(mesas, l, c, i);
     }
 }
-static Mesa* mesa_livre(Mesa** mesas, int l, int c)
+static Mesa *mesa_livre(Mesa **mesas, int l, int c)
 {
     if (mesas == NULL || l <= 0 || c <= 0)
     {
@@ -267,8 +260,8 @@ static Mesa* mesa_livre(Mesa** mesas, int l, int c)
     }
     return NULL;
 }
-    
-static bool ocupa_mesa(Mesa* m, int n, Pilha* p)
+
+static bool ocupa_mesa(Mesa *m, int n, Pilha *p)
 {
     if (m == NULL || p == NULL || n < 1 || n > 4)
     {
@@ -309,7 +302,7 @@ static bool ocupa_mesa(Mesa* m, int n, Pilha* p)
     return true;
 }
 
-//FILA
+// FILA
 
 static bool fila_vazia(Fila *f)
 {
@@ -329,7 +322,7 @@ int enfileirar_grupo(Fila *f, int pessoas)
         return 0;
     }
 
-    novo->senha = f->proxima_senha++;   
+    novo->senha = f->proxima_senha++;
     novo->pessoas = pessoas;
     novo->prox = NULL;
 
@@ -388,8 +381,6 @@ void libera_fila(Fila *f)
     free(f);
 }
 
-
-
 void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
 {
     if (mesas == NULL || p == NULL || f == NULL)
@@ -447,4 +438,121 @@ void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
         printf("Sem mesas disponiveis. Grupo de %d pessoa(s) na fila com a senha %d.\n",
                restante, senha);
     }
+}
+
+static void chama_fila(Mesa **mesas, int l, int c, Pilha *p, Fila *f)
+{
+    while (!fila_vazia(f))
+    {
+        Mesa *m = mesa_livre(mesas, l, c);
+        if (m == NULL)
+        {
+            return;
+        }
+
+        Grupo *g = f->ini;
+        int n = (g->pessoas > 4) ? 4 : g->pessoas;
+
+        printf("Chamando a senha %d da fila: ", g->senha);
+        if (!ocupa_mesa(m, n, p))
+        {
+            return;
+        }
+
+        g->pessoas -= n;
+        if (g->pessoas == 0)
+        {
+            f->ini = g->prox;
+            if (f->ini == NULL)
+            {
+                f->fim = NULL;
+            }
+            free(g);
+        }
+        else
+        {
+            printf("A senha %d continua na fila aguardando %d lugar(es).\n", g->senha, g->pessoas);
+        }
+    }
+}
+
+void finalizar_refeicao(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int id)
+{
+    if (mesas == NULL || p == NULL || f == NULL)
+    {
+        printf("Restaurante nao inicializado.\n");
+        return;
+    }
+    if (id < 1 || id > l * c)
+    {
+        printf("Mesa inexistente.\n");
+        return;
+    }
+
+    Mesa *m = &mesas[(id - 1) / c][(id - 1) % c];
+    if (!m->ocupado)
+    {
+        printf("A mesa %d ja esta livre.\n", id);
+        return;
+    }
+
+    m->ocupado = false;
+    m->pessoas = 0;
+    m->comanda = 0;
+    printf("Mesa %d liberada.\n", id);
+
+    int falta = 4 - m->pratos;
+    if (p->quantidade >= falta)
+    {
+        for (int i = 0; i < falta; i++)
+        {
+            pop_pratos(p);
+        }
+        m->pratos = 4;
+    }
+    else
+    {
+        printf("Pratos insuficientes para arrumar a mesa %d.\n", id);
+    }
+    chama_fila(mesas, l, c, p, f);
+}
+
+void desistir(Fila *f, int senha)
+{
+    if (f == NULL)
+    {
+        printf("Fila inexistente.\n");
+        return;
+    }
+
+    Grupo *ant = NULL;
+    Grupo *g = f->ini;
+
+    while (g != NULL && g->senha != senha)
+    {
+        ant = g;
+        g = g->prox;
+    }
+
+    if (g == NULL)
+    {
+        printf("Senha %d nao encontrada na fila.\n", senha);
+        return;
+    }
+
+    if (ant == NULL)
+    {
+        f->ini = g->prox;
+    }
+    else
+    {
+        ant->prox = g->prox;
+    }
+    if (g == f->fim)
+    {
+        f->fim = ant;
+    }
+
+    free(g);
+    printf("Grupo da senha %d saiu da fila.\n", senha);
 }

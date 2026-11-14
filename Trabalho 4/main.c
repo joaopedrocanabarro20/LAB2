@@ -72,13 +72,13 @@ int main()
         case 3:
             printf("Numero da mesa: ");
             scanf("%d", &y);
-            // funcao de acabar a refeicao
+            finalizar_refeicao(mesas, l, c, pilha, fila, y);
             break;
 
         case 4:
             printf("Senha do grupo: ");
             scanf("%d", &y);
-            // funcao de desistir da fila
+            desistir(fila, y);
             break;
 
         case 5:
