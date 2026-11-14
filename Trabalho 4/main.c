@@ -21,7 +21,10 @@ int main()
         printf("6) Imprimir\n");
         printf("0) Sair\n");
         printf("Opcao: ");
-        scanf("%d", &op);
+        if (scanf("%d", &op) != 1)
+        {
+            break;
+        }
 
         if (op >= 2 && op <= 6 && mesas == NULL)
         {
@@ -52,9 +55,8 @@ int main()
             {
                 printf("Erro ao abrir o restaurante.\n");
                 libera_mesa(mesas, l);
-                // libera_pilha
-                // libera_fila
-
+                libera_pilha(pilha);
+                libera_fila(fila);
                 return 1;
             }
             repor_pratos(pilha, y);
@@ -64,19 +66,19 @@ int main()
         case 2:
             printf("Quantidade de pessoas: ");
             scanf("%d", &y);
-            // funcao de fazer os clientes chegar
+            chegar_clientes(mesas, l, c, pilha, fila, y);
             break;
 
         case 3:
             printf("Numero da mesa: ");
             scanf("%d", &y);
-            // funcao    de acabar a refeicao
+            // funcao de acabar a refeicao
             break;
 
         case 4:
             printf("Senha do grupo: ");
             scanf("%d", &y);
-            // funcao de desistir da fila]
+            // funcao de desistir da fila
             break;
 
         case 5:
@@ -86,14 +88,37 @@ int main()
             break;
 
         case 6:
+        {
+            int sub;
+            printf("\n1) Uma mesa\n2) Todas as mesas\n3) Fila de espera\n4) Pilha de pratos\nOpcao: ");
+            scanf("%d", &sub);
+            switch (sub)
+            {
+            case 1:
+                printf("Numero da mesa: ");
+                scanf("%d", &y);
+                imprimir_mesa(mesas, l, c, y);
+                break;
+            case 2:
+                imprimir_todas_mesas(mesas, l, c);
+                break;
+            case 3:
+                imprimir_fila(fila);
+                break;
+            case 4:
+                imprimir_pilha(pilha);
+                break;
+            default:
+                printf("Opcao invalida.\n");
+            }
+            break;
+        }
         }
 
     } while (op != 0);
 
-    if (mesas != NULL)
-    {
-        libera_mesa(mesas, l);
-
-    }
+    libera_mesa(mesas, l);
+    libera_pilha(pilha);
+    libera_fila(fila);
     return 0;
 }

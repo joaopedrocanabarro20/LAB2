@@ -308,3 +308,143 @@ static bool ocupa_mesa(Mesa* m, int n, Pilha* p)
 
     return true;
 }
+
+//FILA
+
+static bool fila_vazia(Fila *f)
+{
+    return f == NULL || f->ini == NULL;
+}
+
+int enfileirar_grupo(Fila *f, int pessoas)
+{
+    if (f == NULL || pessoas <= 0)
+    {
+        return 0;
+    }
+
+    Grupo *novo = malloc(sizeof(Grupo));
+    if (novo == NULL)
+    {
+        return 0;
+    }
+
+    novo->senha = f->proxima_senha++;   
+    novo->pessoas = pessoas;
+    novo->prox = NULL;
+
+    if (f->fim == NULL)
+    {
+        f->ini = novo;
+    }
+    else
+    {
+        f->fim->prox = novo;
+    }
+    f->fim = novo;
+
+    return novo->senha;
+}
+
+void imprimir_fila(Fila *f)
+{
+    if (f == NULL)
+    {
+        printf("Fila inexistente.\n");
+        return;
+    }
+
+    int grupos = 0, total = 0;
+
+    for (Grupo *g = f->ini; g != NULL; g = g->prox)
+    {
+        printf("Grupo %d aguarda por %d lugar(es)\n", g->senha, g->pessoas);
+        grupos++;
+        total += g->pessoas;
+    }
+
+    if (grupos == 0)
+    {
+        printf("Fila de espera vazia.\n");
+        return;
+    }
+    printf("%d grupo(s) na fila, %d pessoa(s) aguardando.\n", grupos, total);
+}
+
+void libera_fila(Fila *f)
+{
+    if (f == NULL)
+    {
+        return;
+    }
+
+    Grupo *g = f->ini;
+    while (g != NULL)
+    {
+        Grupo *aux = g;
+        g = g->prox;
+        free(aux);
+    }
+    free(f);
+}
+
+
+
+void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
+{
+    if (mesas == NULL || p == NULL || f == NULL)
+    {
+        printf("Restaurante nao inicializado.\n");
+        return;
+    }
+    if (pessoas <= 0)
+    {
+        printf("Quantidade de pessoas invalida.\n");
+        return;
+    }
+
+    int restante = pessoas;
+
+    if (fila_vazia(f))
+    {
+        while (restante > 0)
+        {
+            Mesa *m = mesa_livre(mesas, l, c);
+            if (m == NULL)
+            {
+                break;
+            }
+
+            int n = (restante > 4) ? 4 : restante;
+            if (!ocupa_mesa(m, n, p))
+            {
+                break;
+            }
+            restante -= n;
+        }
+    }
+
+    if (restante == 0)
+    {
+        printf("Grupo de %d pessoa(s) acomodado.\n", pessoas);
+        return;
+    }
+
+    int senha = enfileirar_grupo(f, restante);
+    if (senha == 0)
+    {
+        printf("Erro ao colocar o grupo na fila.\n");
+        return;
+    }
+
+    if (restante < pessoas)
+    {
+        printf("%d pessoa(s) sentaram; %d aguardam na fila com a senha %d.\n",
+               pessoas - restante, restante, senha);
+    }
+    else
+    {
+        printf("Sem mesas disponiveis. Grupo de %d pessoa(s) na fila com a senha %d.\n",
+               restante, senha);
+    }
+}
