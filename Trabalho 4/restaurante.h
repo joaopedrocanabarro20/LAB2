@@ -34,4 +34,6 @@ void libera_fila(Fila *f);
 void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas);
 void finalizar_refeicao(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int id);
 void desistir(Fila *f, int senha);
+void reabastecer_pratos(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int quantidade);
+
 #endif

@@ -4,6 +4,23 @@
 #include <stdbool.h>
 #include <string.h>
 
+// Le um inteiro; em caso de entrada invalida limpa o buffer e retorna false.
+static bool ler_int(const char *msg, int *valor)
+{
+    printf("%s", msg);
+    if (scanf("%d", valor) == 1)
+    {
+        return true;
+    }
+
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF)
+    {
+    }
+    printf("Entrada invalida.\n");
+    return false;
+}
+
 int main()
 {
     Mesa **mesas = NULL;
@@ -20,10 +37,14 @@ int main()
         printf("5) Repor pratos\n");
         printf("6) Imprimir\n");
         printf("0) Sair\n");
-        printf("Opcao: ");
-        if (scanf("%d", &op) != 1)
+        if (!ler_int("Opcao: ", &op))
         {
-            break;
+            if (feof(stdin))
+            {
+                break;
+            }
+            op = -1;
+            continue;
         }
 
         if (op >= 2 && op <= 6 && mesas == NULL)
@@ -40,12 +61,11 @@ int main()
                 printf("Restaurante ja aberto.\n");
                 break;
             }
-            printf("Linhas: ");
-            scanf("%d", &l);
-            printf("Colunas: ");
-            scanf("%d", &c);
-            printf("Pratos na pilha: ");
-            scanf("%d", &y);
+            if (!ler_int("Linhas: ", &l) || !ler_int("Colunas: ", &c) ||
+                !ler_int("Pratos na pilha: ", &y))
+            {
+                break;
+            }
 
             mesas = inicializa_mesa(l, c);
             pilha = inicializa_pilha_pratos();
@@ -53,51 +73,63 @@ int main()
 
             if (mesas == NULL || pilha == NULL || fila == NULL)
             {
-                printf("Erro ao abrir o restaurante.\n");
+                printf("Erro ao abrir o restaurante (linhas e colunas devem ser > 0).\n");
                 libera_mesa(mesas, l);
                 libera_pilha(pilha);
                 libera_fila(fila);
-                return 1;
+                mesas = NULL;
+                pilha = NULL;
+                fila = NULL;
+                l = c = 0;
+                break;
             }
             repor_pratos(pilha, y);
             printf("Restaurante aberto com %d mesas.\n", l * c);
             break;
 
         case 2:
-            printf("Quantidade de pessoas: ");
-            scanf("%d", &y);
-            chegar_clientes(mesas, l, c, pilha, fila, y);
+            if (ler_int("Quantidade de pessoas: ", &y))
+            {
+                chegar_clientes(mesas, l, c, pilha, fila, y);
+            }
             break;
 
         case 3:
-            printf("Numero da mesa: ");
-            scanf("%d", &y);
-            finalizar_refeicao(mesas, l, c, pilha, fila, y);
+            if (ler_int("Numero da mesa: ", &y))
+            {
+                finalizar_refeicao(mesas, l, c, pilha, fila, y);
+            }
             break;
 
         case 4:
-            printf("Senha do grupo: ");
-            scanf("%d", &y);
-            desistir(fila, y);
+            if (ler_int("Senha do grupo: ", &y))
+            {
+                desistir(fila, y);
+            }
             break;
 
         case 5:
-            printf("Quantidade de pratos: ");
-            scanf("%d", &y);
-            repor_pratos(pilha, y);
+            if (ler_int("Quantidade de pratos: ", &y))
+            {
+                reabastecer_pratos(mesas, l, c, pilha, fila, y);
+            }
             break;
 
         case 6:
         {
             int sub;
-            printf("\n1) Uma mesa\n2) Todas as mesas\n3) Fila de espera\n4) Pilha de pratos\nOpcao: ");
-            scanf("%d", &sub);
+            printf("\n1) Uma mesa\n2) Todas as mesas\n3) Fila de espera\n4) Pilha de pratos\n");
+            if (!ler_int("Opcao: ", &sub))
+            {
+                break;
+            }
             switch (sub)
             {
             case 1:
-                printf("Numero da mesa: ");
-                scanf("%d", &y);
-                imprimir_mesa(mesas, l, c, y);
+                if (ler_int("Numero da mesa: ", &y))
+                {
+                    imprimir_mesa(mesas, l, c, y);
+                }
                 break;
             case 2:
                 imprimir_todas_mesas(mesas, l, c);
@@ -113,6 +145,12 @@ int main()
             }
             break;
         }
+
+        case 0:
+            break;
+
+        default:
+            printf("Opcao invalida.\n");
         }
 
     } while (op != 0);

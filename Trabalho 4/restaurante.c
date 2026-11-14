@@ -223,6 +223,7 @@ void imprimir_mesa(Mesa **mesa, int l, int c, int id)
         printf("Mesa %d: livre\n", m->identificacao);
     }
 }
+
 void imprimir_todas_mesas(Mesa **mesas, int l, int c)
 {
     if (l <= 0 || c <= 0)
@@ -241,6 +242,7 @@ void imprimir_todas_mesas(Mesa **mesas, int l, int c)
         imprimir_mesa(mesas, l, c, i);
     }
 }
+
 static Mesa *mesa_livre(Mesa **mesas, int l, int c)
 {
     if (mesas == NULL || l <= 0 || c <= 0)
@@ -309,6 +311,7 @@ static bool fila_vazia(Fila *f)
     return f == NULL || f->ini == NULL;
 }
 
+// Insere um grupo no fim da fila. Retorna a senha gerada, ou 0 em caso de erro.
 int enfileirar_grupo(Fila *f, int pessoas)
 {
     if (f == NULL || pessoas <= 0)
@@ -381,6 +384,96 @@ void libera_fila(Fila *f)
     free(f);
 }
 
+// ---------- ATUALIZACAO DO RESTAURANTE ----------
+
+// Arruma (4 pratos) as mesas livres e desarrumadas, se houver pratos.
+// Retorna quantas mesas foram arrumadas.
+static int arruma_mesas_livres(Mesa **mesas, int l, int c, Pilha *p)
+{
+    int arrumadas = 0;
+
+    for (int i = 0; i < l; i++)
+    {
+        for (int j = 0; j < c; j++)
+        {
+            Mesa *m = &mesas[i][j];
+            if (m->ocupado || m->pratos >= 4)
+            {
+                continue;
+            }
+
+            int falta = 4 - m->pratos;
+            if (p->quantidade >= falta)
+            {
+                for (int k = 0; k < falta; k++)
+                {
+                    pop_pratos(p);
+                }
+                m->pratos = 4;
+                arrumadas++;
+                printf("Mesa %d arrumada.\n", m->identificacao);
+            }
+        }
+    }
+    return arrumadas;
+}
+
+// Senta o grupo da frente da fila enquanto houver mesa pronta.
+// Retorna quantas mesas foram ocupadas.
+static int chama_fila(Mesa **mesas, int l, int c, Pilha *p, Fila *f)
+{
+    int ocupadas = 0;
+
+    while (!fila_vazia(f))
+    {
+        Mesa *m = mesa_livre(mesas, l, c);
+        if (m == NULL)
+        {
+            break;
+        }
+
+        Grupo *g = f->ini;
+        int n = (g->pessoas > 4) ? 4 : g->pessoas;
+
+        printf("Chamando a senha %d da fila: ", g->senha);
+        if (!ocupa_mesa(m, n, p))
+        {
+            break;
+        }
+        ocupadas++;
+
+        g->pessoas -= n;
+        if (g->pessoas == 0)
+        {
+            f->ini = g->prox;
+            if (f->ini == NULL)
+            {
+                f->fim = NULL;
+            }
+            free(g);
+        }
+        else
+        {
+            printf("A senha %d continua na fila aguardando %d lugar(es).\n", g->senha, g->pessoas);
+        }
+    }
+    return ocupadas;
+}
+
+// Repete "arrumar mesas" + "chamar fila" ate nao haver mais progresso,
+// pois sentar gente devolve pratos e arrumar mesas libera lugares.
+static void atualiza_restaurante(Mesa **mesas, int l, int c, Pilha *p, Fila *f)
+{
+    int progresso;
+    do
+    {
+        progresso = arruma_mesas_livres(mesas, l, c, p);
+        progresso += chama_fila(mesas, l, c, p, f);
+    } while (progresso > 0);
+}
+
+// ---------- CLIENTES ----------
+
 void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
 {
     if (mesas == NULL || p == NULL || f == NULL)
@@ -396,6 +489,7 @@ void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
 
     int restante = pessoas;
 
+    // Se ja ha gente esperando, o grupo novo nao "fura" a fila.
     if (fila_vazia(f))
     {
         while (restante > 0)
@@ -418,6 +512,7 @@ void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
     if (restante == 0)
     {
         printf("Grupo de %d pessoa(s) acomodado.\n", pessoas);
+        atualiza_restaurante(mesas, l, c, p, f); // pratos devolvidos podem arrumar mesas
         return;
     }
 
@@ -438,42 +533,7 @@ void chegar_clientes(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int pessoas)
         printf("Sem mesas disponiveis. Grupo de %d pessoa(s) na fila com a senha %d.\n",
                restante, senha);
     }
-}
-
-static void chama_fila(Mesa **mesas, int l, int c, Pilha *p, Fila *f)
-{
-    while (!fila_vazia(f))
-    {
-        Mesa *m = mesa_livre(mesas, l, c);
-        if (m == NULL)
-        {
-            return;
-        }
-
-        Grupo *g = f->ini;
-        int n = (g->pessoas > 4) ? 4 : g->pessoas;
-
-        printf("Chamando a senha %d da fila: ", g->senha);
-        if (!ocupa_mesa(m, n, p))
-        {
-            return;
-        }
-
-        g->pessoas -= n;
-        if (g->pessoas == 0)
-        {
-            f->ini = g->prox;
-            if (f->ini == NULL)
-            {
-                f->fim = NULL;
-            }
-            free(g);
-        }
-        else
-        {
-            printf("A senha %d continua na fila aguardando %d lugar(es).\n", g->senha, g->pessoas);
-        }
-    }
+    atualiza_restaurante(mesas, l, c, p, f);
 }
 
 void finalizar_refeicao(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int id)
@@ -501,20 +561,23 @@ void finalizar_refeicao(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int id)
     m->comanda = 0;
     printf("Mesa %d liberada.\n", id);
 
-    int falta = 4 - m->pratos;
-    if (p->quantidade >= falta)
+    if (p->quantidade < 4 - m->pratos)
     {
-        for (int i = 0; i < falta; i++)
-        {
-            pop_pratos(p);
-        }
-        m->pratos = 4;
+        printf("Pratos insuficientes para arrumar a mesa %d (ela sera arrumada quando houver pratos).\n", id);
     }
-    else
+
+    atualiza_restaurante(mesas, l, c, p, f);
+}
+
+void reabastecer_pratos(Mesa **mesas, int l, int c, Pilha *p, Fila *f, int quantidade)
+{
+    if (mesas == NULL || p == NULL || f == NULL)
     {
-        printf("Pratos insuficientes para arrumar a mesa %d.\n", id);
+        printf("Restaurante nao inicializado.\n");
+        return;
     }
-    chama_fila(mesas, l, c, p, f);
+    repor_pratos(p, quantidade);
+    atualiza_restaurante(mesas, l, c, p, f);
 }
 
 void desistir(Fila *f, int senha)
