@@ -45,7 +45,7 @@ arv_c* inicializa_arvore(void){
     return arvore;
 }
 
-curso* cria_curso(int abb, char* nome, char* centro){
+curso* cria_curso(int abb, const char* nome, const char* centro){
     curso* c = malloc(sizeof(curso));
     if (c == NULL)
     {
@@ -58,4 +58,29 @@ curso* cria_curso(int abb, char* nome, char* centro){
     c->esq = NULL;
     c->dir = NULL;
     return c;
+}
+
+bool insere_rec(curso** atual, curso* novo){
+    if (*atual == NULL){
+        *atual = novo;
+        return true;
+    }
+
+    if(novo->ABB < (*atual)->ABB){
+        return insere_rec(&(*atual)->esq, novo);
+    }
+
+    if(novo->ABB > (*atual)->ABB){
+        return insere_rec(&(*atual)->dir, novo);
+    }
+
+    return false;
+}
+
+bool insere_curso(arv_c* arvore, curso* novo){
+    if (novo == NULL || arvore == NULL){
+        return false;
+    }
+
+    return insere_rec(&arvore->raiz, novo);
 }
