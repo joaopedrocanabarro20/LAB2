@@ -84,3 +84,92 @@ bool insere_curso(arv_c* arvore, curso* novo){
 
     return insere_rec(&arvore->raiz, novo);
 }
+curso* busca_curso_rec(curso* c, int codigo){
+    if (c == NULL)
+    {
+        return NULL;
+    }
+    if(c->ABB == codigo){
+        return c;
+    }
+    if (c->ABB > codigo)
+    {
+        return busca_curso_rec(c->esq, codigo);    
+    }
+    else if(c->ABB < codigo){
+        return busca_curso_rec(c->dir,codigo);
+    }
+    return NULL;
+}
+curso* busca_curso(arv_c* arvore, int codigo){
+    if(arvore == NULL || arvore->raiz == NULL){
+        return NULL;
+    }
+    return busca_curso_rec(arvore->raiz, codigo);
+}
+void imprime_cursos_rec(curso* atual){
+    if (atual == NULL)
+    {
+        return;
+    }
+    imprime_cursos_rec(atual->esq);
+    printf("Código: %d\n", atual->ABB);
+    printf("Nome: %s\n", atual->nome);
+    printf("Centro: %s\n\n", atual->centro);
+    imprime_cursos_rec(atual->dir);
+}
+void imprime_cursos(arv_c* arvore){
+    if (arvore == NULL )
+    {
+        printf("Arvore inexistente\n");
+        return;
+    }
+    if (arvore->raiz == NULL)
+    {
+        printf("Arvore vazia\n");
+        return;
+    }
+    imprime_cursos_rec(arvore->raiz);
+}
+aluno* cria_aluno(int matricula, const char* nome, int ano){
+    aluno* a = malloc(sizeof(aluno));
+    if(a == NULL){
+        printf("Memória insuficiente\n");
+        return NULL;
+    }
+    a->matricula = matricula;
+    snprintf(a->nome, sizeof(a->nome), "%s", nome);
+    a->ano_ingresso = ano;
+    a->prox = NULL;
+    return a;
+}
+
+bool insere_aluno(curso* c, aluno* novo){
+    if(c == NULL || novo == NULL){
+        return false;
+    }
+
+    aluno* atual = c->alunos.inicio;
+    aluno* anterior = NULL;
+
+    while(atual != NULL && atual->matricula < novo->matricula){
+        anterior = atual;
+        atual = atual->prox;
+    }
+
+    if(atual != NULL && atual->matricula == novo->matricula){
+        printf("Matricula repetida\n");
+        return false;
+    }
+
+    novo->prox = atual;
+
+    if(anterior == NULL){
+        c->alunos.inicio = novo;
+    }
+    else{
+        anterior->prox = novo;
+    }
+
+    return true;
+}
